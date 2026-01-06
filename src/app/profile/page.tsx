@@ -1,112 +1,140 @@
-'use client';
+// app/profile/page.tsx
+"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { getSupabaseBrowser } from "@/lib/supabase/client";
+import Container from "@/components/layout/header/Container";
 
 export default function ProfilePage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [supabase, setSupabase] = useState<ReturnType<typeof getSupabaseBrowser> | null>(null);
 
-  // 🔒 Obtener sesión y perfil
   useEffect(() => {
-    const fetchProfile = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+    // Solo se ejecuta en el navegador (cliente)
+    const client = getSupabaseBrowser();
+    setSupabase(client);
 
-      if (!session || !session.user) {
+    const checkUser = async () => {
+      const {
+        data: { session },
+      } = await client.auth.getSession();
+
+      if (!session?.user) {
         router.replace("/login");
         return;
       }
 
       setUser(session.user);
 
-      const { data: profileData } = await supabase
+      // Carga los datos del perfil desde la tabla "profiles"
+      const { data, error } = await client
         .from("profiles")
-        .select("*")
+        .select("username, full_name")
         .eq("id", session.user.id)
         .single();
 
-      setProfile(profileData);
+      if (error) {
+        console.error("Error cargando perfil:", error);
+      } else {
+        setProfile(data);
+      }
+
       setLoading(false);
     };
 
-    fetchProfile();
+    checkUser();
+
+    // Escucha cambios en la autenticación
+    const { data: listener } = client.auth.onAuthStateChange((_event, session) => {
+      if (!session?.user) {
+        router.replace("/login");
+      } else {
+        setUser(session.user);
+      }
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, [router]);
 
-  if (loading) return <div className="text-white flex justify-center items-center min-h-screen">Loading...</div>;
+  const handleSignOut = async () => {
+    if (!supabase) return;
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
+  // Función para obtener iniciales del nombre o email
+  const getInitials = () => {
+    if (profile?.username) {
+      return profile.username.slice(0, 2).toUpperCase();
+    }
+    if (user?.email) {
+      return user.email.slice(0, 2).toUpperCase();
+    }
+    return "US";
+  };
+
+  if (loading) {
+    return (
+      <Container>
+        <div className="text-white text-center py-20">Cargando perfil...</div>
+      </Container>
+    );
+  }
 
   return (
-    <main className="min-h-screen bg-slate-900 flex justify-center items-center">
-      <div className="bg-slate-800 rounded-lg p-6 w-full max-w-md">
-        {/* HEADER */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <div 
-              className="w-16 h-16 rounded-full overflow-hidden border-2 border-indigo-600 cursor-pointer relative"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            >
-              <img
-                src={profile?.avatar_url || "/default-avatar.png"}
-                alt="Avatar"
-                className="w-full h-full object-cover"
-              />
+    <Container className="min-h-screen py-12">
+      <div className="max-w-2xl mx-auto bg-slate-800/80 backdrop-blur rounded-2xl p-8 border border-slate-700">
+        <div className="flex items-center gap-6 mb-8">
+          {/* Avatar simple con iniciales */}
+          <div className="w-20 h-20 bg-indigo-600 rounded-full flex items-center justify-center text-2xl font-bold text-white shadow-lg">
+            {getInitials()}
+          </div>
 
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-20 w-40 bg-slate-700 rounded-lg shadow-lg flex flex-col">
-                  <button 
-                    onClick={() => router.push("/profile")}
-                    className="px-4 py-2 text-white hover:bg-slate-600 text-left"
-                  >
-                    Profile
-                  </button>
-                  <button 
-                    onClick={() => router.push("/settings")}
-                    className="px-4 py-2 text-white hover:bg-slate-600 text-left"
-                  >
-                    Settings
-                  </button>
-                  <button 
-                    onClick={async () => {
-                      await supabase.auth.signOut();
-                      router.push("/login");
-                    }}
-                    className="px-4 py-2 text-white hover:bg-slate-600 text-left"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-            <h1 className="text-2xl font-bold text-white">{profile?.username || user.email}</h1>
+          <div>
+            <h1 className="text-3xl font-bold text-white">
+              {profile?.username || user?.email?.split("@")[0] || "Usuario"}
+            </h1>
+            <p className="text-slate-400">{user?.email}</p>
           </div>
         </div>
 
-        {/* INFO */}
-        <div className="space-y-3">
-          <p><span className="font-semibold">Email:</span> {user.email}</p>
-          <p><span className="font-semibold">Username:</span> {profile?.username || "User"}</p>
-          <p><span className="font-semibold">Status:</span> Active</p>
-          <p><span className="font-semibold">Role:</span> User</p>
+        <div className="space-y-4 text-slate-300">
+          <p>
+            <strong>Username:</strong> {profile?.username || "No definido"}
+          </p>
+          <p>
+            <strong>Nombre completo:</strong>{" "}
+            {profile?.full_name || "No definido"}
+          </p>
+          <p>
+            <strong>Miembro desde:</strong>{" "}
+            {user?.created_at
+              ? new Date(user.created_at).toLocaleDateString("es-CO")
+              : "Desconocido"}
+          </p>
         </div>
 
-        {/* BOTONES */}
-        <div className="mt-6 flex flex-col gap-3">
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-semibold"
+        <div className="mt-8 flex gap-4">
+          <a
+            href="/dashboard"
+            className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-medium transition"
           >
-            Go to Dashboard
+            Ir al Dashboard
+          </a>
+          <button
+            onClick={handleSignOut}
+            className="px-6 py-3 bg-red-600/80 hover:bg-red-700 rounded-lg text-white font-medium transition"
+          >
+            Cerrar Sesión
           </button>
         </div>
       </div>
-    </main>
+    </Container>
   );
 }

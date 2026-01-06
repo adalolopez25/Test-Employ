@@ -1,3 +1,4 @@
+// app/layout.tsx
 import Container from '@/components/layout/header/Container'
 import './globals.css';
 import Header from '@/components/layout/header/Header'
@@ -14,13 +15,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className="min-h-screen bg-gray-900 text-white">  {/* Fondo general opcional */}
         <Container>
-          <Header/>
-        {children}
+          <Header />          {/* Navbar */}
+          <main className="flex-1">  {/* Opcional: para que ocupe el espacio */}
+            {children}        {/* Todas las páginas van aquí */}
+          </main>
         </Container>
       </body>
-      
     </html>
   )
 }

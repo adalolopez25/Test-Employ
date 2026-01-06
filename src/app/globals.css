@@ -1,2 +1,19 @@
 @import 'aos/dist/aos.css';
 @import "tailwindcss";
+
+
+/*Sesion carrousel*/
+
+/* Carousel.module.css */
+.carouselContainer {
+  overflow-x: hidden;
+  width: 100%;
+  cursor: grab;
+}
+
+.carouselContent {
+  display: flex;
+  gap: 16px;
+  flex-wrap: nowrap;
+  width: max-content;
+}
