@@ -1,38 +1,72 @@
-'use client'
-import { getCharacters } from "@/services/api"
-import { Card } from "../components/Card"
-import { useEffect, useState } from "react"
+'use client';
+
+import { useEffect, useState } from "react";
+import Container from "@/components/layout/header/Container";
+import { Card } from "@/app/components/Card";
+import Modal from "@/components/layout/ui/Modal";
+import Loading from "./loading";
+import type { Character } from "@/types/character";
+import type { ApiResponse } from "@/types/ApiResponse";
 
 export default function Home() {
-  const [characters, setCharacters] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
+  const [characters, setCharacters] = useState<Character[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const [ratings, setRatings] = useState<Record<number, number>>({});
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
 
   useEffect(() => {
-    setLoading(true)
-    fetch("https://rickandmortyapi.com/api/character")
-      .then(res => res.json())
-      .then(data => {
-        setCharacters(data)
-        setLoading(false)
-      })
-  }, [])
+    const fetchCharacters = async () => {
+      const res = await fetch("https://rickandmortyapi.com/api/character");
+      const data: ApiResponse = await res.json();
+      setCharacters(data.results);
+      setLoading(false);
+    };
 
-  if (loading) return <p>Cargando...</p>
+    fetchCharacters();
+  }, []);
+
+  const handleRate = (id: number, value: number) => {
+    setRatings((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  if (loading) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+  }
 
   return (
-    <div>
-      {characters.map((char, index) => (
-        <div key={index}>
-          <h3>{char.name}</h3>
+    <Container>
+      <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {characters.map((character) => (
           <Card
-            title={char.name}
-            description={char.description}
-            imageUrl={char.image}
-            onClick={() => getCharacters()}
+            key={character.id}
+            character={character}
           />
-          <img src={char.image} />
-        </div>
-      ))}
-    </div>
-  )
+        ))}
+      </div>
+
+      {selectedCharacter && (
+        <Modal
+          title={selectedCharacter.name}
+          onClose={() => setSelectedCharacter(null)}
+        >
+          <img
+            src={selectedCharacter.image}
+            className="rounded-xl mb-4"
+          />
+
+          <p className="text-white">
+            ⭐ Rating: {ratings[selectedCharacter.id] || "Sin calificar"}
+          </p>
+        </Modal>
+      )}
+    </Container>
+  );
 }

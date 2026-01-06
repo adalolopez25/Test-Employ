@@ -1,0 +1,29 @@
+/* Agregados para el formulario de Register */
+.register-header h1 {
+  font-size: 36px;
+  font-weight: bold;
+  color: white;
+  letter-spacing: -0.5px;
+}
+
+.register-header p {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.link-text {
+  color: #a78bfa;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-text:hover {
+  color: #c4b5fd;
+}
+
+.extra-links {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 14px;
+  color: #94a3b8;
+}

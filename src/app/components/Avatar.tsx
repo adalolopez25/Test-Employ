@@ -6,11 +6,11 @@ interface AvatarProps {
   size?: number;
 }
 
-export const Avatar: React.FC<AvatarProps> = ({
+export const Avatar = ({
   name,
   imageUrl,
   size = 48,
-}) => {
+} : AvatarProps) => {
   const initials = name
     .split(" ")
     .map(word => word[0])

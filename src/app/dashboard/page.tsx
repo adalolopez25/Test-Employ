@@ -1,208 +1,201 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-
-interface Character {
-  id: number;
-  name: string;
-  status: string;
-  species: string;
-  image: string;
-}
-
-interface ApiResponse {
-  results: Character[];
-}
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Card } from "@/app/components/Card";
+import Container from "@/components/layout/header/Container";
+import Modal from "@/components/layout/ui/Modal";
+import type { Character } from "@/types/character";
+import type { ApiResponse } from "@/types/ApiResponse";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [characters, setCharacters] = useState<Character[]>([]);
-  const [filteredCharacters, setFilteredCharacters] = useState<Character[]>([]);
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [filtered, setFiltered] = useState<Character[]>([]);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [loading, setLoading] = useState(true);
+  const [ratings, setRatings] = useState<Record<number, number>>({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [highlighted, setHighlighted] = useState<Character[]>([]);
+  const [user, setUser] = useState<any>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  
-  const [stats, setStats] = useState<any>({});
-
+  /* 🔒 Cargar usuario local */
   useEffect(() => {
+    const u = localStorage.getItem("user");
+    if (!u) router.replace("/login");
+    else setUser(JSON.parse(u));
+  }, [router]);
+
+  /* 🚪 Logout */
+  const handleLogout = () => {
+    document.cookie = "session=; path=/; max-age=0";
+    localStorage.removeItem("user");
+    router.push("/login");
+  };
+
+  /* 🔹 Obtener personajes */
+  useEffect(() => {
+    const fetchCharacters = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("https://rickandmortyapi.com/api/character");
+        const data: ApiResponse = await res.json();
+        setCharacters(data.results);
+        setFiltered(data.results);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchCharacters();
   }, []);
 
-  const fetchCharacters = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('https://rickandmortyapi.com/api/character');
-      const data: ApiResponse = await response.json();
-
-      setCharacters(data.results);
-      setFilteredCharacters(data.results);
-      calculateStats(data.results);
-    } catch (err: any) {
-      setError(err.message || 'Error inesperado');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const calculateStats = (list: Character[]) => {
-    const alive = list.filter(c => c.status === 'Alive').length;
-    const dead = list.filter(c => c.status === 'Dead').length;
-    const unknown = list.filter(c => c.status === 'unknown').length;
-
-    setStats({
-      total: list.length,
-      alive,
-      dead,
-      unknown,
-    });
-  };
-
+  /* 🔹 Filtro dinámico */
   useEffect(() => {
     let temp = [...characters];
-
-    if (search) {
-      temp = temp.filter(c =>
+    if (search)
+      temp = temp.filter((c) =>
         c.name.toLowerCase().includes(search.toLowerCase())
       );
-    }
+    if (statusFilter !== "all")
+      temp = temp.filter((c) => c.status === statusFilter);
+    setFiltered(temp);
+    const featured = temp.filter((c) => (ratings[c.id] || 0) >= 4);
+    setHighlighted(featured);
+  }, [search, statusFilter, characters, ratings]);
 
-    if (statusFilter !== 'all') {
-      temp = temp.filter(c => c.status === statusFilter);
-    }
+  const handleRate = (id: number, value: number) => {
+    setRatings((prev) => ({ ...prev, [id]: value }));
+  };
 
-    setFilteredCharacters(temp);
-  }, [search, statusFilter, characters]);
-
-  
-  const totalCharacters = useMemo(() => {
-    return filteredCharacters.length;
-  }, [filteredCharacters]);
-
-  if (loading) {
+  if (loading)
     return (
-      <div className="flex justify-center items-center h-screen">
-        <span className="spinner-border text-primary"></span>
+      <div className="text-white text-center min-h-screen flex items-center justify-center">
+        Loading dashboard...
       </div>
     );
-  }
-
-  if (error) {
-    return (
-      <div className="alert alert-danger m-4">
-        <strong>Error:</strong> {error}
-      </div>
-    );
-  }
 
   return (
-    <div className="container-fluid p-4">
-      <h1 className="mb-4 text-2xl font-bold">Dashboard de Personajes</h1>
+    <Container className="flex flex-col items-center min-h-screen bg-slate-900 py-10">
+      {/* HEADER */}
+      <div className="flex justify-between items-center w-full max-w-7xl mb-8">
+        <h1 className="text-4xl font-bold text-white">Character Dashboard</h1>
 
-      {/* Estadísticas */}
-      <div className="row mb-4">
-        <div className="col-md-3">
-          <div className="card text-center p-3 shadow-sm">
-            <h6>Total</h6>
-            <p className="fw-bold">{stats.total}</p>
-          </div>
-        </div>
-        <div className="col-md-3">
-          <div className="card text-center p-3 shadow-sm">
-            <h6>Alive</h6>
-            <p className="fw-bold text-success">{stats.alive}</p>
-          </div>
-        </div>
-        <div className="col-md-3">
-          <div className="card text-center p-3 shadow-sm">
-            <h6>Dead</h6>
-            <p className="fw-bold text-danger">{stats.dead}</p>
-          </div>
-        </div>
-        <div className="col-md-3">
-          <div className="card text-center p-3 shadow-sm">
-            <h6>Unknown</h6>
-            <p className="fw-bold text-warning">{stats.unknown}</p>
-          </div>
-        </div>
-      </div>
+        <div className="relative">
+          {user ? (
+            <div className="relative inline-block text-left">
+              {/* Botón avatar + dropdown */}
+              <button
+                className="flex items-center gap-2 focus:outline-none"
+                onClick={() => setDropdownOpen((prev) => !prev)}
+              >
+                <img
+                  src={user.user_metadata?.avatar || "/default-avatar.png"}
+                  alt="Avatar"
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <span className="text-white font-semibold">
+                  {user.user_metadata?.username || "User"}
+                </span>
+              </button>
 
-      {/* Filtros */}
-      <div
-        className="mb-4 p-3 rounded"
-        style={{ backgroundColor: '#f8f9fa' }} 
-      >
-        <div className="row g-2">
-          <div className="col-md-6">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Buscar personaje..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-          </div>
-
-          <div className="col-md-4">
-            <select
-              className="form-select"
-              value={statusFilter}
-              onChange={e => setStatusFilter(e.target.value)}
-            >
-              <option value="all">Todos</option>
-              <option value="Alive">Alive</option>
-              <option value="Dead">Dead</option>
-              <option value="unknown">Unknown</option>
-            </select>
-          </div>
-
-          <div className="col-md-2 d-flex align-items-center">
-            <span className="text-muted">
-              Total visibles: {totalCharacters}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Lista */}
-      <div className="row">
-        {filteredCharacters.map(character => (
-          <div key={character.id} className="col-md-3 mb-4">
-            <div className="card h-100 shadow-sm">
-              <img
-                src={character.image}
-                alt={character.name}
-                className="card-img-top"
-              />
-              <div className="card-body">
-                <h5 className="card-title">{character.name}</h5>
-                <p className="card-text">
-                  <span
-                    className={`badge ${
-                      character.status === 'Alive'
-                        ? 'bg-success'
-                        : character.status === 'Dead'
-                        ? 'bg-danger'
-                        : 'bg-secondary'
-                    }`}
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-slate-800 rounded-md shadow-lg z-10">
+                  <a
+                    href="/profile"
+                    className="block px-4 py-2 text-white hover:bg-slate-700"
                   >
-                    {character.status}
-                  </span>
-                </p>
-                <p className="text-sm text-gray-500">
-                  Especie: {character.species}
-                </p>
-              </div>
+                    Perfil
+                  </a>
+                  <a
+                    href="/settings"
+                    className="block px-4 py-2 text-white hover:bg-slate-700"
+                  >
+                    Configuración
+                  </a>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-white hover:bg-red-600"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
-          </div>
+          ) : (
+            // Mostrar login/register si NO hay usuario
+            <div className="flex gap-4">
+              <a href="/login" className="text-white hover:text-indigo-400">
+                Login
+              </a>
+              <a href="/register" className="text-white hover:text-indigo-400">
+                Register
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* FILTROS */}
+      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-7xl mb-6">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 rounded-lg px-4 py-2 bg-slate-700 text-white"
+        />
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="rounded-lg px-4 py-2 bg-slate-700 text-white"
+        >
+          <option value="all">All</option>
+          <option value="Alive">Alive</option>
+          <option value="Dead">Dead</option>
+          <option value="unknown">Unknown</option>
+        </select>
+        <button
+          onClick={() => setModalOpen(true)}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold"
+        >
+          Featured
+        </button>
+      </div>
+
+      {/* GRID PRINCIPAL */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {filtered.map((c) => (
+          <Card
+            key={c.id}
+            character={c}
+            rating={ratings[c.id] || 0}
+            onRate={handleRate}
+          />
         ))}
       </div>
 
-      {filteredCharacters.length === 0 && (
-        <div className="alert alert-info mt-4">
-          No se encontraron resultados.
-        </div>
+      {/* MODAL */}
+      {modalOpen && (
+        <Modal onClose={() => setModalOpen(false)} title="Featured Characters">
+          {highlighted.length === 0 && (
+            <p className="text-gray-300">There are no prominent characters.</p>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+            {highlighted.map((c) => (
+              <Card
+                key={c.id}
+                character={c}
+                rating={ratings[c.id]}
+                onRate={handleRate}
+              />
+            ))}
+          </div>
+        </Modal>
       )}
-    </div>
+    </Container>
   );
 }

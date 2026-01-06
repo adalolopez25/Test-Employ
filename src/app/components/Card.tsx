@@ -1,64 +1,142 @@
-import React from "react";
+'use client';
+
+import React, { useState } from "react";
 import styled from "styled-components";
+import type { Character } from "@/types/character";
+import { useRouter } from "next/navigation";
+
+/* ================== TYPES ================== */
 
 interface CardProps {
-  title: string;
-  description?: string;
-  imageUrl?: string;
-  onClick?: () => void;
+  character: Character;
+  rating?: number; // ahora opcional
+  onRate?: (id: number, value: number) => void;
+  onOpen?: () => void;
 }
 
+interface StarProps {
+  $filled: boolean;
+}
+
+/* ================== STYLES ================== */
+
 const CardContainer = styled.div`
-  width: 300px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-  background-color: #ffffff;
+  width: 100%;
+  max-width: 280px;
+  height: 420px;
+  background-color: #1e293b;
+  border-radius: 16px;
   overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.18);
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55);
   }
 `;
 
 const CardImage = styled.img`
   width: 100%;
-  height: 160px;
+  height: 180px;
   object-fit: cover;
+  background-color: #334155;
 `;
 
 const CardContent = styled.div`
-  padding: 16px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(100% - 180px);
 `;
 
-const CardTitle = styled.h3`
-  margin: 0 0 8px 0;
-  font-size: 1.2rem;
-  color: #333;
+const CardName = styled.h3`
+  color: #f1f5f9;
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 6px;
 `;
 
-const CardDescription = styled.p`
-  margin: 0;
-  font-size: 0.95rem;
-  color: #666;
+const CardDetails = styled.div`
+  font-size: 0.85rem;
+  color: #cbd5e1;
   line-height: 1.4;
+
+  span {
+    color: #f8fafc;
+    font-weight: 500;
+  }
 `;
 
-export const Card: React.FC<CardProps> = ({
-  title,
-  description,
-  imageUrl,
-  onClick,
-}) => {
+const StarsContainer = styled.div`
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+`;
+
+const Star = styled.span<StarProps>`
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: ${({ $filled }) => ($filled ? "#facc15" : "#64748b")};
+  transition: color 0.2s ease;
+`;
+
+/* ================== COMPONENT ================== */
+
+export const Card = ({
+  character,
+  rating = 0,
+  onRate,
+  onOpen,
+}: CardProps) => {
+  const router = useRouter();
+  const [hovered, setHovered] = useState(0);
+
+  const handleCardClick = () => {
+    onOpen?.();
+    router.push(`/characters/${character.id}`);
+  };
+
   return (
-    <CardContainer onClick={onClick}>
-      {imageUrl && <CardImage src={imageUrl} alt={title} />}
+    <CardContainer onClick={handleCardClick}>
+      <CardImage src={character.image} alt={character.name} />
+
       <CardContent>
-        <CardTitle>{title}</CardTitle>
-        {description && (
-          <CardDescription>{description}</CardDescription>
+        <div>
+          <CardName>{character.name}</CardName>
+
+          <CardDetails>
+            <p><span>Status:</span> {character.status}</p>
+            <p><span>Species:</span> {character.species}</p>
+            <p><span>Gender:</span> {character.gender}</p>
+            <p><span>Origin:</span> {character.origin.name}</p>
+            <p><span>Location:</span> {character.location.name}</p>
+          </CardDetails>
+        </div>
+
+        {/* ⭐ SOLO EN DASHBOARD */}
+        {onRate && (
+          <StarsContainer onMouseLeave={() => setHovered(0)}>
+            {[1, 2, 3, 4, 5].map((n) => {
+              const isFilled = hovered ? hovered >= n : rating >= n;
+
+              return (
+                <Star
+                  key={n}
+                  $filled={isFilled}
+                  onMouseEnter={() => setHovered(n)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRate(character.id, n);
+                  }}
+                >
+                  ★
+                </Star>
+              );
+            })}
+          </StarsContainer>
         )}
       </CardContent>
     </CardContainer>
