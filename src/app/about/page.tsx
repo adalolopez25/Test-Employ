@@ -9,7 +9,7 @@ export default function About() {
       <div className="bg-slate-800 rounded-2xl shadow-xl max-w-6xl w-full p-10 flex flex-col gap-8">
         {/* Título principal */}
         <h1 className="text-5xl font-extrabold text-white text-center">
-          About this project
+          Acerca de este proyecto
         </h1>
 
         <p className="text-gray-300 text-lg leading-relaxed">

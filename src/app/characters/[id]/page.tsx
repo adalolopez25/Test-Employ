@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Container from "@/components/layout/header/Container";
-import Loading from "@/app/loading"; // tu componente de loading
+import Loading from "@/app/loading";
+import Link from "next/link";
 
 interface Character {
   id: number;
@@ -39,70 +40,88 @@ export default function CharacterPage() {
         setLoading(false);
       }
     };
-
     fetchCharacter();
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex justify-center items-center bg-slate-900">
-        <Loading />
-      </div>
-    );
-  }
-
-  if (error || !character) {
-    return (
-      <div className="min-h-screen flex justify-center items-center bg-slate-900 text-white">
-        <p>{error || "Personaje no encontrado"}</p>
-      </div>
-    );
-  }
+  if (loading) return <div className="min-h-screen flex justify-center items-center bg-slate-950 text-white"><Loading /></div>;
+  if (error || !character) return <div className="min-h-screen flex justify-center items-center bg-slate-950 text-white"><p>{error}</p></div>;
 
   return (
-    <Container className="flex flex-col items-center justify-center min-h-screen bg-slate-900 py-10">
-      <div className="flex flex-col md:flex-row items-center md:items-start gap-10 max-w-6xl w-full">
-        {/* Imagen grande */}
-        <div className="shrink-0">
-          <img
-            src={character.image}
-            alt={character.name}
-            className="w-80 md:w-100 h-auto rounded-2xl shadow-2xl"
-          />
-        </div>
+    <div className="min-h-screen bg-tranparent text-slate-200 relative overflow-hidden">
+      {/* Círculos de luz de fondo (Efecto decorativo) */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px]" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-green-500/10 rounded-full blur-[120px]" />
 
-        {/* Información del personaje */}
-        <div className="flex-1 text-white space-y-4">
-          <h1 className="text-5xl font-extrabold">{character.name}</h1>
-          <p className="text-lg text-gray-300">
-            <strong>Estado:</strong>{" "}
-            <span
-              className={`px-3 py-1 rounded-full font-semibold ${
-                character.status === "Alive"
-                  ? "bg-green-400 text-slate-900"
-                  : character.status === "Dead"
-                  ? "bg-red-500 text-white"
-                  : "bg-gray-400 text-slate-900"
-              }`}
-            >
-              {character.status}
-            </span>
-          </p>
-          <p className="text-lg text-gray-300"><strong>Especie:</strong> {character.species}</p>
-          {character.type && <p className="text-lg text-gray-300"><strong>Tipo:</strong> {character.type}</p>}
-          <p className="text-lg text-gray-300"><strong>Género:</strong> {character.gender}</p>
-          <p className="text-lg text-gray-300"><strong>Origen:</strong> {character.origin.name}</p>
-          <p className="text-lg text-gray-300"><strong>Ubicación:</strong> {character.location.name}</p>
+      <Container className="relative z-10 py-12 px-6">
+        {/* Botón Volver Minimalista */}
+        <button
+          onClick={() => router.back()}
+          className="group flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-10"
+        >
+          <span className="text-xl group-hover:-translate-x-1 transition-transform">←</span>
+          <span className="font-medium tracking-wide uppercase text-xs">Regresar al multiverso</span>
+        </button>
 
-          {/* Botón de volver */}
-          <button
-            onClick={() => router.back()}
-            className="mt-6 px-6 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-colors"
-          >
-            Volver
-          </button>
+        <div className="flex flex-col lg:flex-row gap-16 items-center">
+          {/* LADO IZQUIERDO: Imagen con marco brillante */}
+          <div className="relative group">
+            <div className={`absolute -inset-1 rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000 ${
+              character.status === 'Alive' ? 'bg-green-400' : 'bg-red-500'
+            }`} />
+            <img
+              src={character.image}
+              alt={character.name}
+              className="relative w-80 md:w-[450px] rounded-2xl shadow-2xl object-cover border border-white/10"
+            />
+          </div>
+
+          {/* LADO DERECHO: Información Estructurada */}
+          <div className="flex-1 w-full">
+            <div className="mb-8">
+              <h1 className="text-6xl md:text-8xl font-black text-white mb-4 tracking-tighter uppercase italic">
+                {character.name}
+              </h1>
+              <div className="flex items-center gap-4">
+                <span className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold border ${
+                  character.status === 'Alive' 
+                  ? 'bg-green-500/10 border-green-500/30 text-green-400' 
+                  : 'bg-red-500/10 border-red-500/30 text-red-400'
+                }`}>
+                  <span className={`w-2 h-2 rounded-full animate-pulse ${character.status === 'Alive' ? 'bg-green-400' : 'bg-red-400'}`} />
+                  {character.status}
+                </span>
+                <span className="bg-white/5 border border-white/10 px-4 py-1.5 rounded-full text-sm font-bold text-slate-300">
+                  {character.species}
+                </span>
+              </div>
+            </div>
+
+            {/* Grilla de Datos */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InfoBox label="Gender" value={character.gender} />
+              <InfoBox label="Origin" value={character.origin.name} />
+              <InfoBox label="Location" value={character.location.name} />
+              {character.type && <InfoBox label="Sub-type" value={character.type} />}
+            </div>
+            
+            {/* Dato Extra Estilizado */}
+            <div className="mt-8 p-6 bg-blue-600/5 border border-blue-500/20 rounded-2xl">
+              <p className="text-blue-400 text-xs font-bold uppercase tracking-widest mb-1">ID del Registro</p>
+              <p className="text-2xl font-mono text-blue-200">#00{character.id}</p>
+            </div>
+          </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </div>
+  );
+}
+
+// Sub-componente interno para las cajas de info
+function InfoBox({ label, value }: { label: string, value: string }) {
+  return (
+    <div className="bg-white/5 border border-white/10 p-6 rounded-2xl backdrop-blur-sm hover:bg-white/10 transition-colors">
+      <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-2">{label}</p>
+      <p className="text-xl text-white font-semibold truncate">{value}</p>
+    </div>
   );
 }
