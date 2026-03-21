@@ -51,7 +51,7 @@ export const Card = ({ character, rating = 0, onRate, onOpen }: CardProps) => {
   };
   const handleCardClick = () => {
     onOpen?.();
-    router.push(`/characters/${character.id}`);
+    router.push(`/info/${character.id}`);
   };
 
   return (
