@@ -1,34 +1,49 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
+import dbConnect from "@/lib/mongodb";
+import User, { IUser } from "@/db/models/users";
+import { Model } from "mongoose";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-// Cliente Supabase con service role key
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+export async function POST(request: Request) {
+  // 1. Usamos el casting para que TS reconozca los métodos de Mongoose
+  const UserModel = User as Model<IUser>;
+  
+  try {
+    await dbConnect();
+    const { name, email, password } = await request.json();
 
-export async function POST(req: NextRequest) {
-  const { email, password, username } = await req.json();
+    // 2. ¿Ya existe el correo? (Cambiado de 'users' a 'UserModel')
+    const userExists = await UserModel.findOne({ email });
+    if (userExists) {
+      return NextResponse.json({ error: "El email ya está registrado" }, { status: 400 });
+    }
 
-  // 1️⃣ Crear usuario en Supabase Auth
-  const { data: userData, error: authError } = await supabase.auth.admin.createUser({
-    email,
-    password,
-    email_confirm: false, // usuario necesita confirmar
-  });
+    // 3. Encriptamos la contraseña
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-  if (authError) return NextResponse.json({ message: authError.message }, { status: 400 });
-  if (!userData.user) return NextResponse.json({ message: "Error creating user" }, { status: 500 });
+    // 4. Guardamos al usuario (Cambiado de 'users' a 'UserModel')
+    const newUser = await UserModel.create({ 
+      name, 
+      email, 
+      password: hashedPassword 
+    });
 
-  // 2️⃣ Crear perfil en tabla "profiles"
-  const { error: profileError } = await supabase
-    .from("profiles")
-    .insert({ id: userData.user.id, username });
+    // 5. Creamos el Token JWT
+    const token = jwt.sign(
+      { userId: newUser._id }, 
+      process.env.JWT_SECRET || "secreto_rick_morty", 
+      { expiresIn: "7d" }
+    );
 
-  if (profileError) return NextResponse.json({ message: profileError.message }, { status: 400 });
+    return NextResponse.json({
+      user: { id: newUser._id, name: newUser.name, email: newUser.email },
+      token
+    }, { status: 201 });
 
-  // 3️⃣ Supabase envía el email de confirmación automáticamente
-  // 🔹 No necesitas generateLink manual, con service_role + email_confirm false y SMTP configurado, Supabase enviará el email
-
-  return NextResponse.json({ message: "Usuario creado. Revisa tu correo para confirmar." });
+  } catch (error) {
+    console.error("Error en Registro:", error);
+    return NextResponse.json({ error: "Error al registrar usuario" }, { status: 500 });
+  }
 }

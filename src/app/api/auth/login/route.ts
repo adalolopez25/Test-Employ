@@ -1,28 +1,42 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import dbConnect from "@/lib/mongodb";
+import User, { IUser } from "@/db/models/users";
+import { Model } from "mongoose";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+export async function POST(request: Request) {
+  const UserModel = User as Model<IUser>;
 
-export async function POST(req: NextRequest) {
-  const { email, password } = await req.json();
+  try {
+    await dbConnect();
+    const { email, password } = await request.json();
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    // 1. ¿Existe el usuario?
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return NextResponse.json({ error: "Credenciales inválidas" }, { status: 401 });
+    }
 
-  if (error) return NextResponse.json({ message: error.message }, { status: 401 });
-  if (!data.user.email_confirmed_at) return NextResponse.json({ message: "Email not confirmed" }, { status: 401 });
+    // 2. ¿La contraseña es correcta? (Comparamos la plana con la encriptada)
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return NextResponse.json({ error: "Credenciales inválidas" }, { status: 401 });
+    }
 
-  // Guardar sesión en cookie
-  const res = NextResponse.json({ user: data.user });
-  res.cookies.set({
-    name: "session",
-    value: data.session?.access_token!,
-    httpOnly: true,
-    path: "/",
-  });
+    // 3. Generamos el Token (Igual que en el registro)
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET || "secreto_rick_morty",
+      { expiresIn: "7d" }
+    );
 
-  return res;
+    return NextResponse.json({
+      user: { id: user._id, name: user.name, email: user.email },
+      token
+    }, { status: 200 });
+
+  } catch (error) {
+    return NextResponse.json({ error: "Error en el inicio de sesión" }, { status: 500 });
+  }
 }
