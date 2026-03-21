@@ -1,53 +1,96 @@
+'use client';
+
+import { useState } from "react";
+
 export function AboutSeries() {
+  const seriesData = {
+    title: "Rick & Morty",
+    subtitle: "Multiverse",
+    description: `Explora cada rincón de la serie. Desde la Ciudadela hasta las dimensiones más remotas, 
+      esta plataforma organiza los registros de todas las temporadas existentes.`,
+    seasons: [
+      { season: 1, episodes: 11 },
+      { season: 2, episodes: 10 },
+      { season: 3, episodes: 10 },
+      { season: 4, episodes: 10 },
+      { season: 5, episodes: 10 },
+      { season: 6, episodes: 10 },
+      { season: 7, episodes: 10 },
+    ],
+  };
+
+  const [openSeason, setOpenSeason] = useState<number | null>(null);
+
+  const toggleSeason = (seasonNumber: number) => {
+    setOpenSeason(openSeason === seasonNumber ? null : seasonNumber);
+  };
+
+  const totalSeasons = seriesData.seasons.length;
+  const totalEpisodes = seriesData.seasons.reduce((sum, s) => sum + s.episodes, 0);
+
   return (
-    /* 1. Usamos max-w-full con un padding lateral que coincida con el del banner */
-    <section className="w-full px-4  mb-20"> 
-      
-      {/* 2. El contenedor interno usa el mismo redondeado y ancho que el banner */}
-      <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-6 items-stretch">
-        
-        {/* Lado Izquierdo: El contenido principal (Proporción 2/3) */}
-        <div className="flex-[2] bg-white/[0.03] border border-white/10 rounded-[3.5rem] p-12 md:p-16 flex flex-col justify-center">
-          <span className="text-blue-500 font-bold uppercase tracking-[0.3em] text-[10px] mb-6">
-            Base de datos interactiva
+    <section className="w-full px-4 md:px-8 py-12 bg-transparent">
+      <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-8">
+
+        {/* Lado Izquierdo: Descripción */}
+        <div className="flex-2 bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 flex flex-col justify-center">
+          <span className="text-blue-500 font-bold uppercase tracking-[0.3em] text-[10px] mb-4">
+            Base de Datos Interactiva
           </span>
-          
-          <h2 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter text-white leading-[0.85] mb-8">
-            Rick & Morty <br />
-            <span className="text-blue-600 font-black">Multiverse</span>
+          <h2 className="text-4xl md:text-6xl font-black italic uppercase tracking-tight text-white mb-4 leading-tight">
+            {seriesData.title} <br />
+            <span className="text-blue-600">{seriesData.subtitle}</span>
           </h2>
-          
-          <p className="text-white/50 text-lg md:text-xl leading-relaxed max-w-2xl font-medium">
-            Una plataforma diseñada para explorar cada rincón de la serie. 
-            Desde la Ciudadela hasta las dimensiones más remotas, 
-            esta terminal organiza los registros de todas las temporadas existentes.
+          <p className="text-white/60 text-md md:text-lg leading-relaxed max-w-xl font-medium">
+            {seriesData.description}
           </p>
         </div>
 
-        {/* Lado Derecho: Estadísticas (Proporción 1/3) */}
-        <div className="flex-1 flex flex-col gap-6">
-          
-          {/* Card Temporadas */}
-          <div className="flex-1 bg-blue-600/10 border border-blue-500/20 rounded-[3.5rem] p-10 flex flex-col justify-center">
-            <span className="text-blue-400 text-[10px] font-bold uppercase tracking-widest mb-3">
-              Temporadas
-            </span>
-            <div className="flex items-baseline gap-3">
-              <span className="text-7xl font-black italic text-white leading-none">07</span>
-              <span className="text-blue-500/40 font-black italic text-xl">SEASONS</span>
+        {/* Lado Derecho: Temporadas y episodios */}
+        <div className="flex-1 flex flex-col gap-4 max-h-[600px] overflow-y-auto">
+
+          {/* Totales */}
+          <div className="flex justify-between mb-4 gap-2">
+            <div className="flex-1 bg-blue-600/10 border border-blue-500/20 rounded-2xl p-4 text-center">
+              <span className="text-blue-400 text-[10px] uppercase tracking-widest mb-1 block">Temporadas</span>
+              <span className="text-3xl md:text-4xl font-black italic text-white">{totalSeasons}</span>
+            </div>
+            <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+              <span className="text-white/30 text-[10px] uppercase tracking-widest mb-1 block">Episodios</span>
+              <span className="text-3xl md:text-4xl font-black italic text-white">{totalEpisodes}</span>
             </div>
           </div>
 
-          {/* Card Episodios */}
-          <div className="flex-1 bg-white/[0.03] border border-white/10 rounded-[3.5rem] p-10 flex flex-col justify-center">
-            <span className="text-white/30 text-[10px] font-bold uppercase tracking-widest mb-3">
-              Episodios
-            </span>
-            <div className="flex items-baseline gap-3">
-              <span className="text-7xl font-black italic text-white leading-none">71</span>
-              <span className="text-white/10 font-black italic text-xl">CAPS</span>
-            </div>
-          </div>
+          {/* Lista de temporadas */}
+          {seriesData.seasons.map((s) => {
+            const isOpen = openSeason === s.season;
+            return (
+              <div key={s.season} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+                {/* Botón de temporada */}
+                <button
+                  onClick={() => toggleSeason(s.season)}
+                  className="w-full text-left px-4 py-3 flex justify-between items-center text-white font-bold hover:bg-blue-600/20 transition-colors"
+                >
+                  <span>Temporada {s.season}</span>
+                  <span>{isOpen ? "▲" : "▼"}</span>
+                </button>
+
+                {/* Episodios con animación tipo slide */}
+                <div
+                  className={`overflow-hidden transition-all duration-500`}
+                  style={{ maxHeight: isOpen ? `${s.episodes * 2.5}rem` : "0" }}
+                >
+                  <ul className="px-6 py-2 text-white/70 text-sm">
+                    {Array.from({ length: s.episodes }, (_, i) => (
+                      <li key={i} className="py-1 border-b border-white/10 last:border-none">
+                        Capítulo {i + 1}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            );
+          })}
 
         </div>
       </div>

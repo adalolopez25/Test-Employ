@@ -10,8 +10,7 @@ const nextConfig = {
       },
     ],
   },
-  // IMPORTANTE: El basePath solo debe ser el nombre del repositorio
-  // Si tu URL es adalolopez25.github.io/Test-Employ/, el basePath es solo '/Test-Employ'
+  
 };
 
 export default nextConfig;

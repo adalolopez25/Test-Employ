@@ -6,6 +6,8 @@ import { Card } from "@/app/components/Card";
 import Modal from "@/components/layout/ui/Modal";
 import Loading from "@/components/layout/ui/Loading";
 import type { Character } from "@/types/character";
+import StatusFilter from "@/components/DropDownMenu";
+
 import type { ApiResponse } from "@/types/ApiResponse";
 import AOS from "aos";
 import {
@@ -42,6 +44,7 @@ const fetchRatings = async (token: string | null) => {
 
 export default function CharactersPage() {
   const [page, setPage] = useState(1);
+  const [filteredList,setFilteredList] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
     null,
@@ -65,6 +68,7 @@ export default function CharactersPage() {
     AOS.init({ duration: 800, once: true });
   }, []);
 
+ 
   // --- TOAST CÁPSULA (72px) ---
   const handleRate = async (id: number, value: number) => {
     if (!token) {

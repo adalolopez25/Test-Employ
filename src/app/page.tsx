@@ -14,7 +14,7 @@ export default function HomePage() {
       
       <footer className="py-20 text-center">
         <p className="text-white/20 text-[9px] font-black uppercase tracking-[1em]">
-          AnimeHero System Terminal
+          AnimeHero
         </p>
       </footer>
     </main>

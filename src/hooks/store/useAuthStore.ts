@@ -5,6 +5,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  role: "admin" | "user";
 }
 
 interface AuthState {
@@ -20,8 +21,11 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       setAuth: (user, token) => set({ user, token }),
-      logout: () => set({ user: null, token: null }),
+      logout : () => {
+        set({user : null, token:null});
+        localStorage.removeItem("animehero-auth");
+      }
     }),
-    { name: "animehero-auth" } // Así se llamará la "llave" en tu navegador
-  )
+    { name: "animehero-auth" }
+  ),
 );

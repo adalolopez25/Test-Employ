@@ -44,8 +44,8 @@ export default function RegisterPage() {
     <div className="min-h-[90vh] flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white/5 border border-white/10 p-10 rounded-[2.5rem] backdrop-blur-2xl shadow-2xl">
         <div className="text-center mb-10">
-          <h2 className="text-4xl font-black italic text-blue-500 tracking-tighter uppercase">Join the Crew</h2>
-          <p className="text-slate-500 text-xs tracking-[0.3em] mt-2 font-bold uppercase">Crea tu ID interdimensional</p>
+          <h2 className="text-4xl font-black italic text-blue-500 tracking-tighter uppercase">Comienza ahora</h2>
+          <p className="text-slate-500 text-xs tracking-[0.3em] mt-2 font-bold uppercase">Crea tu ID Cuenta</p>
         </div>
 
         {error && (
@@ -59,7 +59,7 @@ export default function RegisterPage() {
             <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
             <input
               type="text"
-              placeholder="Username"
+              placeholder="Nombre de usuario"
               className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-blue-500 transition-all text-white placeholder:text-slate-600"
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
@@ -70,7 +70,7 @@ export default function RegisterPage() {
             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
             <input
               type="email"
-              placeholder="Email Address"
+              placeholder="Correo Electronico"
               className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-blue-500 transition-all text-white placeholder:text-slate-600"
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
@@ -81,7 +81,7 @@ export default function RegisterPage() {
             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Contraseña"
               className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-blue-500 transition-all text-white placeholder:text-slate-600"
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               required
@@ -94,13 +94,13 @@ export default function RegisterPage() {
             className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black italic tracking-widest py-5 rounded-2xl transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 group"
           >
             {loading ? <Loader2 className="animate-spin" /> : (
-              <>REGISTER <ArrowRight className="group-hover:translate-x-1 transition-transform" size={18} /></>
+              <>Crear Acceso <ArrowRight className="group-hover:translate-x-1 transition-transform" size={18} /></>
             )}
           </button>
         </form>
 
         <p className="text-center text-slate-500 mt-10 text-sm">
-          ¿Ya eres parte? <Link href="/login" className="text-blue-400 font-bold hover:underline">LOG IN</Link>
+          ¿Ya eres parte? <Link href="/login" className="text-blue-400 font-bold hover:underline">Ingresar</Link>
         </p>
       </div>
     </div>

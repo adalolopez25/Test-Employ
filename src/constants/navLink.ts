@@ -1,6 +1,12 @@
 
 export const NavLinks = [
-  { title: 'Home', href: '/' },
-  { title: 'About', href: '/about' },
-  {title : "Contact", href : "/contact"}
+  { title: 'Inicio', href: '/' },
+  { title: 'Conocenos', href: '/about' },
+  {title : "Contacto", href : "/contact"}
 ];
+
+export const userLinks = [
+  {title : "Favoritos", href : "/favorites"},
+  {title : "Dashboard"}
+]
+

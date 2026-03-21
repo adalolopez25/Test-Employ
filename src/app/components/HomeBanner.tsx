@@ -73,11 +73,11 @@ export function BannerCarousel() {
                 <div className="flex items-center gap-3 mb-6">
                   <span className="h-[2px] w-12 bg-blue-600 rounded-full" />
                   <span className="text-blue-500 text-[10px] font-black uppercase tracking-[0.4em]">
-                    {char.species} Protocol
+                    {char.species} Specie
                   </span>
                 </div>
                 
-                <h2 className="text-6xl md:text-[7.5rem] font-black italic uppercase tracking-tighter leading-[0.8] mb-8 text-white drop-shadow-2xl">
+                <h2 className="text-6xl md:text-[4.5rem] font-black italic uppercase tracking-tighter leading-[0.8] mb-8 text-white drop-shadow-2xl">
                   {char.name.split(' ')[0]} <br />
                   <span className="text-blue-600">{char.name.split(' ').slice(1).join(' ')}</span>
                 </h2>
@@ -88,7 +88,7 @@ export function BannerCarousel() {
                 </p>
 
                 <Link href={`/info/${char.id}`} className="bg-white text-black px-12 py-5 rounded-full font-black italic uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all shadow-2xl active:scale-95 inline-flex items-center gap-3 w-fit">
-                  <Play size={18} fill="currentColor" /> Analizar
+                  <Play size={18} fill="currentColor" /> Explorar
                 </Link>
               </div>
             </div>

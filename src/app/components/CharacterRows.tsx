@@ -27,8 +27,8 @@ export function CharacterRow() {
     <section className="w-full py-20 bg-transparent group/section overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-8 mb-10 flex justify-between items-end">
         <div className="border-l-4 border-blue-600 pl-6">
-          <h2 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter text-white leading-none">
-            Sujetos <span className="text-blue-600 font-black">Clave</span>
+          <h2 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter text-white leading-none">
+            Personajes <span className="text-blue-600 font-black">Principales</span>
           </h2>
         </div>
         
@@ -37,7 +37,7 @@ export function CharacterRow() {
           href="/characters" 
           className="hidden md:flex items-center gap-2 text-blue-500 font-black uppercase italic tracking-widest text-[10px] hover:text-white transition-colors group/link"
         >
-          Explorar Base de Datos
+           Bases de Datos
           <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
         </Link>
       </div>

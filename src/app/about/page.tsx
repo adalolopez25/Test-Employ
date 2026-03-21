@@ -1,104 +1,239 @@
-'use client';
+"use client";
 
-import { Cpu, Globe, Layout, Code2, Zap, Database } from "lucide-react";
+import { useState } from "react";
+
+interface Item {
+  name: string;
+  description: string;
+  image: string;
+}
 
 export default function About() {
+  const [openSection, setOpenSection] = useState<"info" | "tech" | "db" | null>(
+    "info",
+  );
+  const [modalItem, setModalItem] = useState<Item | null>(null);
+
+  const toggleSection = (section: "info" | "tech" | "db") => {
+    setOpenSection(openSection === section ? null : section);
+  };
+
+  const technologies: Item[] = [
+    {
+      name: "Next.js 16",
+      description:
+        "Framework React moderno con SSR y optimización de imágenes.",
+      image: "/assets/img/next.png",
+    },
+    {
+      name: "React 18",
+      description: "Librería principal para construir UI reactivas.",
+      image: "/assets/img/react.svg",
+    },
+    {
+      name: "TypeScript",
+      description: "Tipado estático para mayor seguridad en el código.",
+      image: "/assets/img/ts.png",
+    },
+    {
+      name: "TailwindCSS v4",
+      description: "Framework de utilidades para diseño rápido y responsivo.",
+      image: "/tech/tailwind.png",
+    },
+    {
+      name: "Lucide React",
+      description: "Biblioteca de íconos vectoriales.",
+      image: "/assets/img/lucide.webp",
+    },
+    {
+      name: "Render",
+      description: "Plataformas de despliegue y hosting.",
+      image: "/assets/img/render.webp",
+    },
+    {
+      name: "Glassmorphism UI",
+      description: "Estética de interfaz con efectos de vidrio y blur.",
+      image: "/assets/img/ui.webp",
+    },
+  ];
+
+  const databases: Item[] = [
+    {
+      name: "MongoDB",
+      description:
+        "Base de datos principal para personajes, episodios y favoritos.",
+      image: "/assets/img/mongo.png",
+    },
+    {
+      name: "Nextjs API",
+      description: "Almacena información de calificaciones y atributos únicos.",
+      image: "/assets/img/next.png",
+    },
+  ];
+
   return (
-    <section className="w-full px-4 md:px-8 py-24 bg-transparent">
-      <div className="max-w-[1400px] mx-auto w-full">
-        
-        {/* Encabezado con Identidad del Proyecto */}
-        <div className="mb-16 pl-6 border-l-4 border-blue-600">
-          <span className="text-blue-500 font-bold uppercase tracking-[0.4em] text-[10px] block mb-2">
-            Protocolo de Documentación // Ver. 16.1.7
-          </span>
-          <h1 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter text-white leading-none">
-            Acerca del <span className="text-blue-600 font-black">Proyecto</span>
-          </h1>
+    <section className="w-full px-4 md:px-8 py-12 bg-transparent">
+      <div className="max-w-[1200px] mx-auto flex flex-col gap-8">
+        {/* Botones de secciones */}
+        <div className="flex gap-4 justify-center flex-wrap">
+          <button
+            onClick={() => toggleSection("info")}
+            className={`px-6 py-3 rounded-full font-bold uppercase tracking-wider transition-all ${
+              openSection === "info"
+                ? "bg-blue-600 text-white shadow-lg"
+                : "bg-white/5 text-white hover:bg-blue-600/20"
+            }`}
+          >
+            Información
+          </button>
+          <button
+            onClick={() => toggleSection("tech")}
+            className={`px-6 py-3 rounded-full font-bold uppercase tracking-wider transition-all ${
+              openSection === "tech"
+                ? "bg-blue-600 text-white shadow-lg"
+                : "bg-white/5 text-white hover:bg-blue-600/20"
+            }`}
+          >
+            Tecnologías
+          </button>
+          <button
+            onClick={() => toggleSection("db")}
+            className={`px-6 py-3 rounded-full font-bold uppercase tracking-wider transition-all ${
+              openSection === "db"
+                ? "bg-blue-600 text-white shadow-lg"
+                : "bg-white/5 text-white hover:bg-blue-600/20"
+            }`}
+          >
+            Base de datos
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          
-          {/* Columna Izquierda: La Narrativa Real del Desarrollo */}
-          <div className="lg:col-span-8 bg-white/[0.03] border border-white/10 rounded-[3.5rem] p-10 md:p-16 flex flex-col justify-center relative overflow-hidden">
-            {/* Decoración sutil de fondo */}
-            <Database size={300} className="absolute -right-20 -bottom-20 text-blue-600/5 rotate-12 pointer-events-none" />
-            
-            <p className="relative z-10 text-white/80 text-xl md:text-2xl leading-relaxed font-medium italic mb-10">
-              "Este proyecto nace como una terminal de datos centralizada para explorar 
-              la complejidad del multiverso de Rick y Morty, unificando registros biológicos 
-              e interdimensionales en una interfaz de alto rendimiento."
-            </p>
-            
-            <div className="relative z-10 space-y-6 text-white/50 text-lg leading-relaxed">
-              <p>
-                La aplicación ha sido desarrollada utilizando <span className="text-white font-bold">Next.js 16</span> bajo el motor de 
-                <span className="text-blue-500 font-bold ml-1">Turbopack</span>, optimizando cada milisegundo de renderizado 
-                para ofrecer una experiencia de usuario fluida y reactiva.
-              </p>
-              <p>
-                A través del consumo de la <span className="text-white font-bold italic underline decoration-blue-600 underline-offset-4">Rick and Morty API</span>, 
-                el sistema procesa y organiza dinámicamente información de cientos de personajes, 
-                clasificándolos por su estado vital, especie y origen dimensional.
-              </p>
-              <p>
-                El diseño visual, bajo la estética <span className="text-blue-600 font-bold tracking-widest">ANIMEHERO</span>, 
-                implementa técnicas de **Glassmorphism** y un sistema de cuadrícula adaptativo (Grid) que asegura 
-                la integridad de la información en cualquier dispositivo de la Ciudadela.
-              </p>
-            </div>
+        {/* Contenedor de contenido */}
+        <div className="relative overflow-hidden transition-all duration-500 h-[600px]">
+          {/* Información del proyecto */}
+          {/* Información del proyecto */}
+<div
+  className={`transition-all duration-500 absolute inset-0 overflow-auto ${
+    openSection === "info" ? "opacity-100 z-10" : "opacity-0 z-0"
+  }`}
+>
+  <div className="bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 text-white/80 space-y-4 h-full">
+    <h2 className="text-center text-4xl md:text-6xl font-black italic text-white mb-4">
+      Información del Proyecto
+    </h2>
+    <div className="text-justify text-2xl tracking-wider font-light flex items-center flex-col justify-stretch mt-20">
 
-            <div className="mt-12 relative z-10">
-              <a
-                href="https://rickandmortyapi.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 px-8 py-4 bg-blue-600 text-white font-black italic uppercase tracking-tighter rounded-full hover:bg-blue-700 transition-all active:scale-95 shadow-[0_0_30px_rgba(37,99,235,0.4)]"
-              >
-                <Globe size={18} />
-                Documentación de la API
-              </a>
+    <p className="mb-15">
+      El objetivo principal de este proyecto fue refactorizar la aplicación existente, 
+      agregando tipado fuerte con TypeScript para mejorar la seguridad y robustez del código.
+    </p>
+    <p>
+      Además, se organizó la estructura del proyecto de forma escalable, facilitando 
+      futuras extensiones y corrigiendo errores previos para lograr un código más limpio 
+      y mantenible.
+    </p>
+    <p>
+      Todo esto se implementa dentro de una interfaz moderna con técnicas de Glassmorphism 
+      y un sistema de cuadrícula adaptativo, garantizando consistencia visual y funcional 
+      en cualquier dispositivo.
+    </p>
+    </div>
+  </div>
+</div>
+
+          {/* Tecnologías */}
+          <div
+            className={`transition-all duration-500 absolute inset-0 overflow-auto p-4 ${
+              openSection === "tech" ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
+              {technologies.map((tech) => (
+                <div
+                  key={tech.name}
+                  onClick={() => setModalItem(tech)}
+                  className="relative bg-white/5 border border-white/10 rounded-3xl flex flex-col justify-end cursor-pointer overflow-hidden transition-all duration-500 group shadow-lg hover:shadow-2xl"
+                  style={{ height: "200px" }} // altura más grande estilo card de película
+                >
+                  {/* Imagen ocupando todo el contenedor */}
+                  <img
+                    src={tech.image}
+                    alt={tech.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+
+                  {/* Overlay negro con nombre */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-60 transition-opacity duration-500"></div>
+
+                  <span className="relative z-10 text-white font-bold text-center px-4 py-2 bg-black/50 m-4 rounded-lg">
+                    {tech.name}
+                  </span>
+
+                  {/* Icono + al hacer hover */}
+                  <div className="absolute inset-0 flex items-center justify-center text-5xl text-white/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    +
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Columna Derecha: El Stack Técnico Real */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
-            
-            <div className="flex-1 bg-blue-600/10 border border-blue-500/20 rounded-[3rem] p-8 flex flex-col justify-center group transition-colors hover:bg-blue-600/20">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 rounded-2xl bg-blue-600/20 text-blue-500">
-                  <Zap size={24} fill="currentColor" />
+          {/* Base de datos */}
+          <div
+            className={`transition-all duration-500 relative overflow-hidden flex flex-col gap-6 h-full ${
+              openSection === "db" ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+          >
+            {databases.map((db) => (
+              <div
+                key={db.name}
+                onClick={() => setModalItem(db)}
+                className="relative w-full cursor-pointer rounded-2xl overflow-hidden transition-all duration-500 group"
+                style={{ height: "45%" }} // cada card ocupa casi la mitad del contenedor
+              >
+                {/* Imagen que se expande */}
+                <img
+                  src={db.image}
+                  alt={db.name}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+
+                {/* Nombre encima de la imagen */}
+                <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white font-bold text-center bg-black/30 px-4 py-1 rounded">
+                  {db.name}
+                </span>
+
+                {/* Icono + al hacer hover */}
+                <div className="absolute inset-0 flex items-center justify-center text-5xl text-white/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                  +
                 </div>
-                <h4 className="text-white font-black italic uppercase tracking-tighter text-xl">Rendimiento</h4>
               </div>
-              <p className="text-blue-400/60 text-[10px] font-bold uppercase tracking-widest leading-relaxed">
-                Renderizado del lado del servidor (SSR) y optimización de imágenes nativa.
-              </p>
-            </div>
-
-            <div className="flex-1 bg-white/[0.03] border border-white/10 rounded-[3rem] p-8 flex flex-col justify-center group">
-              <div className="flex items-center gap-4 mb-4 text-white/40 group-hover:text-blue-500 transition-colors">
-                <Layout size={32} />
-                <h4 className="text-white font-black italic uppercase tracking-tighter text-xl">UI / UX</h4>
-              </div>
-              <p className="text-white/20 text-[10px] font-bold uppercase tracking-widest leading-relaxed">
-                Componentes reutilizables con Tailwind CSS v4 y animaciones interactivas.
-              </p>
-            </div>
-
-            <div className="flex-1 bg-white/[0.03] border border-white/10 rounded-[3rem] p-8 flex flex-col justify-center group">
-              <div className="flex items-center gap-4 mb-4 text-white/40 group-hover:text-blue-500 transition-colors">
-                <Code2 size={32} />
-                <h4 className="text-white font-black italic uppercase tracking-tighter text-xl">Tipado</h4>
-              </div>
-              <p className="text-white/20 text-[10px] font-bold uppercase tracking-widest leading-relaxed">
-                Desarrollo robusto con TypeScript para un manejo de datos sin errores dimensionales.
-              </p>
-            </div>
-
+            ))}
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      {modalItem && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={() => setModalItem(null)}
+        >
+          <div
+            className="bg-slate-900 rounded-2xl p-8 max-w-lg w-full text-white space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-2xl font-bold">{modalItem.name}</h3>
+            <p>{modalItem.description}</p>
+            <button
+              className="mt-4 px-4 py-2 bg-blue-600 rounded hover:bg-blue-500 font-bold"
+              onClick={() => setModalItem(null)}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
