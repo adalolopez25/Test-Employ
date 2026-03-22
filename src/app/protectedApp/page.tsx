@@ -6,7 +6,6 @@ export default function ProtectedApp({ children }: { children: React.ReactNode }
   const [password, setPassword] = useState("");
   const [isAuthorized, setIsAuthorized] = useState(false);
 
-  // Leer autorización al iniciar
   useEffect(() => {
     if (localStorage.getItem("authorized") === "true") {
       setIsAuthorized(true);
@@ -16,7 +15,7 @@ export default function ProtectedApp({ children }: { children: React.ReactNode }
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const SECRET_KEY = process.env.NEXT_PUBLIC_PROTECTED_KEY || "andres13";
+    const SECRET_KEY = process.env.NEXT_PUBLIC_KEY;
 
     if (password === SECRET_KEY) {
       setIsAuthorized(true);
