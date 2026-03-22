@@ -6,7 +6,7 @@
 @custom-variant dark (&:is(.dark *));
 
 .myimageform {
-  background-image: url("/assets/rick.png");
+  background-image: url("https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/rick.png");
   background-size: cover;
   
 }
@@ -14,7 +14,7 @@
 body {
   background-image: 
     linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), 
-    url("/assets/rick.png");
+    url("https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/rick.png");
 
   background-size: cover;
   background-position: center;

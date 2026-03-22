@@ -18,13 +18,13 @@ const MEDIA_ITEMS = [
     id: "0",
     title: "Official Trailer | Season 1",
     tag: "Adult Swim Official",
-    src: "/assets/season/season1.mp4",
+    src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/season1.mp4",
   },
   {
     id: "1",
     title: "Official Trailer | Season 2",
     tag: "Adult Swim Official",
-    src: "/assets/season/season2.mp4",
+    src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/season2.mp4",
   },
  
   
@@ -32,49 +32,49 @@ const MEDIA_ITEMS = [
     id: "3",
     title: "Official Trailer | Season 3",
     tag: "Adult Swim Official",
-    src: "/assets/season/season3.mp4",
+    src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/season3.mp4",
   },
   {
     id: "4",
     title: "official Trailer | Season 4",
     tag: "Adult Swim Official",
-    src: "/assets/season/season4.mp4",
+    src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/season4.mp4",
   },
   {
     id: "5",
     title: "official Trailer | Season 5 ",
     tag: "Adult Swim Official",
-    src: "/assets/season/season5.mp4",
+    src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/season5.mp4",
   },
   {
     id: "6",
     title: "official Trailer | Season 6",
     tag: "Adult Swim Official",
-    src: "/assets/season/season6.mp4",
+    src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/season6.mp4",
   },
   {
     id: "7",
     title: "official Trailer | Season 7",
     tag: "Adult Swim Official",
-    src: "/assets/season/season7.mp4",
+    src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/season7.mp4",
   },
   {
     id: "8",
     title: "Season 6 Behind the Scenes",
     tag: "Adult Swim Official",
-    src: "/assets/season/behindScenes.mp4",
+    src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/behindScenes.mp4",
   },
   {
     id: "9",
     title: "Season 7 Sneak Peek",
     tag: "Adult Swim Official",
-    src: "/assets/season/Peek.mp4",
+    src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/Peek.mp4",
   },
    {
     id: "10",
     title: "The Anime Series | extras",
     tag: "Rick and Morty Anime",
-    src: "/assets/season/extras.mp4",
+    src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/extras.mp4",
   },
 ];
 

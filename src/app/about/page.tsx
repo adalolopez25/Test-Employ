@@ -5,7 +5,7 @@ import { useState } from "react";
 interface Item {
   name: string;
   description: string;
-  image: string;
+  src: string;
 }
 
 export default function About() {
@@ -23,37 +23,37 @@ export default function About() {
       name: "Next.js 16",
       description:
         "Framework React moderno con SSR y optimización de imágenes.",
-      image: "/assets/img/next.png",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/next.png",
     },
     {
       name: "React 18",
       description: "Librería principal para construir UI reactivas.",
-      image: "/assets/img/react.svg",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/react.svg",
     },
     {
       name: "TypeScript",
       description: "Tipado estático para mayor seguridad en el código.",
-      image: "/assets/img/ts.png",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/ts.png",
     },
     {
       name: "TailwindCSS v4",
       description: "Framework de utilidades para diseño rápido y responsivo.",
-      image: "/tech/tailwind.png",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/tailwindcss.jpeg",
     },
     {
       name: "Lucide React",
       description: "Biblioteca de íconos vectoriales.",
-      image: "/assets/img/lucide.webp",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/lucide.webp",
     },
     {
       name: "Render",
       description: "Plataformas de despliegue y hosting.",
-      image: "/assets/img/render.webp",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/render.webp",
     },
     {
       name: "Glassmorphism UI",
       description: "Estética de interfaz con efectos de vidrio y blur.",
-      image: "/assets/img/ui.webp",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/ui.webp",
     },
   ];
 
@@ -62,12 +62,12 @@ export default function About() {
       name: "MongoDB",
       description:
         "Base de datos principal para personajes, episodios y favoritos.",
-      image: "/assets/img/mongo.png",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/mongo.png",
     },
     {
       name: "Nextjs API",
       description: "Almacena información de calificaciones y atributos únicos.",
-      image: "/assets/img/next.png",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/next.png",
     },
   ];
 
@@ -112,34 +112,35 @@ export default function About() {
         <div className="relative overflow-hidden transition-all duration-500 h-[600px]">
           {/* Información del proyecto */}
           {/* Información del proyecto */}
-<div
-  className={`transition-all duration-500 absolute inset-0 overflow-auto ${
-    openSection === "info" ? "opacity-100 z-10" : "opacity-0 z-0"
-  }`}
->
-  <div className="bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 text-white/80 space-y-4 h-full">
-    <h2 className="text-center text-4xl md:text-6xl font-black italic text-white mb-4">
-      Información del Proyecto
-    </h2>
-    <div className="text-justify text-2xl tracking-wider font-light flex items-center flex-col justify-stretch mt-20">
-
-    <p className="mb-15">
-      El objetivo principal de este proyecto fue refactorizar la aplicación existente, 
-      agregando tipado fuerte con TypeScript para mejorar la seguridad y robustez del código.
-    </p>
-    <p>
-      Además, se organizó la estructura del proyecto de forma escalable, facilitando 
-      futuras extensiones y corrigiendo errores previos para lograr un código más limpio 
-      y mantenible.
-    </p>
-    <p>
-      Todo esto se implementa dentro de una interfaz moderna con técnicas de Glassmorphism 
-      y un sistema de cuadrícula adaptativo, garantizando consistencia visual y funcional 
-      en cualquier dispositivo.
-    </p>
-    </div>
-  </div>
-</div>
+          <div
+            className={`transition-all duration-500 absolute inset-0 overflow-auto ${
+              openSection === "info" ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+          >
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 text-white/80 space-y-4 h-full">
+              <h2 className="text-center text-4xl md:text-6xl font-black italic text-white mb-4">
+                Información del Proyecto
+              </h2>
+              <div className="text-justify text-2xl tracking-wider font-light flex items-center flex-col justify-stretch mt-20">
+                <p className="mb-15">
+                  El objetivo principal de este proyecto fue refactorizar la
+                  aplicación existente, agregando tipado fuerte con TypeScript
+                  para mejorar la seguridad y robustez del código.
+                </p>
+                <p>
+                  Además, se organizó la estructura del proyecto de forma
+                  escalable, facilitando futuras extensiones y corrigiendo
+                  errores previos para lograr un código más limpio y mantenible.
+                </p>
+                <p>
+                  Todo esto se implementa dentro de una interfaz moderna con
+                  técnicas de Glassmorphism y un sistema de cuadrícula
+                  adaptativo, garantizando consistencia visual y funcional en
+                  cualquier dispositivo.
+                </p>
+              </div>
+            </div>
+          </div>
 
           {/* Tecnologías */}
           <div
@@ -157,7 +158,7 @@ export default function About() {
                 >
                   {/* Imagen ocupando todo el contenedor */}
                   <img
-                    src={tech.image}
+                    src={tech.src}
                     alt={tech.name}
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
@@ -193,7 +194,7 @@ export default function About() {
               >
                 {/* Imagen que se expande */}
                 <img
-                  src={db.image}
+                  src={db.src}
                   alt={db.name}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import connectMongoDB from "@/lib/mongodb";
 import User, { IUser } from "@/db/models/users";
-import { QueryFilter } from "mongoose";
 
 // Helper para obtener el usuario desde el middleware
 const getUserFromRequest = (request: Request): IUser | null => {
@@ -16,16 +15,11 @@ const getUserFromRequest = (request: Request): IUser | null => {
 
 export async function GET(request: Request) {
   try {
-    // 1️⃣ Conectar a la BD
     await connectMongoDB();
 
-    // 2️⃣ Obtener usuario autenticado desde middleware
     const requester = getUserFromRequest(request);
     if (!requester) {
-      return NextResponse.json(
-        { message: "No autorizado" },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: "No autorizado" }, { status: 401 });
     }
 
     if (requester.role !== "admin") {
@@ -34,13 +28,10 @@ export async function GET(request: Request) {
         { status: 403 }
       );
     }
-
-    // 4️⃣ Query segura, tipada
-    const filter: QueryFilter<IUser> = {}; 
-    const users = await User.find(filter)
-      .select("-password") 
+    const users = await User.find()
+      .select("-password")
       .sort({ createdAt: -1 })
-      .lean(); 
+      .lean();
 
     return NextResponse.json(users, { status: 200 });
   } catch (error) {
