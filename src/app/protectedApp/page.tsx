@@ -1,16 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ProtectedApp({ children }: { children: React.ReactNode }) {
   const [password, setPassword] = useState("");
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const SECRET_KEY = process.env.PROTECTED_SECRET_KEY; // <--- Cambia esta clave por la tuya
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Leer autorización al iniciar
+  useEffect(() => {
+    if (localStorage.getItem("authorized") === "true") {
+      setIsAuthorized(true);
+    }
+  }, []);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const SECRET_KEY = process.env.NEXT_PUBLIC_PROTECTED_KEY || "andres13";
+
     if (password === SECRET_KEY) {
       setIsAuthorized(true);
+      localStorage.setItem("authorized", "true");
     } else {
       alert("Clave incorrecta");
       setPassword("");
@@ -19,12 +29,12 @@ export default function ProtectedApp({ children }: { children: React.ReactNode }
 
   if (!isAuthorized) {
     return (
-      <div className="flex items-center justify-center h-screen bg-slate-950">
+      <div className="flex items-center justify-center h-screen bg-black/70">
         <form
           onSubmit={handleSubmit}
-          className="bg-white/5 backdrop-blur-md p-12 rounded-3xl flex flex-col items-center gap-6"
+          className="bg-black/50 p-12 rounded-3xl flex flex-col items-center gap-6"
         >
-          <h2 className="text-white text-3xl font-black italic uppercase mb-4">
+          <h2 className="text-white text-3xl font-black italic mb-4">
             Acceso Restringido
           </h2>
           <input
@@ -32,7 +42,7 @@ export default function ProtectedApp({ children }: { children: React.ReactNode }
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Ingresa la clave"
-            className="px-4 py-2 rounded-xl text-black w-64 focus:outline-none"
+            className="px-4 py-2 rounded-xl text-white w-64 focus:outline-none"
           />
           <button
             type="submit"
@@ -45,6 +55,5 @@ export default function ProtectedApp({ children }: { children: React.ReactNode }
     );
   }
 
-  // Si la clave es correcta, renderiza la app
   return <>{children}</>;
 }

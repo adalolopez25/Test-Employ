@@ -1,26 +1,44 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import jwt from "jsonwebtoken";
 
 export function middleware(req: NextRequest) {
-  const session = req.cookies.get("session")?.value;
-  const userRole = req.cookies.get("user-role")?.value; // 1. Nueva cookie de rol
+  const token = req.cookies.get("session")?.value;
   const { pathname } = req.nextUrl;
 
-  // REGLA 1: Si no hay sesión, nadie entra a zonas privadas
-  if (!session && (pathname.startsWith("/dashboard") || pathname.startsWith("/admin"))) {
-    return NextResponse.redirect(new URL("/blocked", req.url));
+  // Rutas públicas
+  const publicRoutes = ["/", "/login", "/blocked"];
+  if (
+    publicRoutes.includes(pathname) ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/images") ||
+    pathname.startsWith("/videos") ||
+    pathname.startsWith("/api") ||
+    pathname === "/favicon.ico"
+  ) {
+    return NextResponse.next();
   }
 
-  // REGLA 2: Si intenta entrar a /admin pero no es 'admin' en la cookie
-  if (pathname.startsWith("/admin") && userRole !== "admin") {
-    // Lo mandamos al dashboard normal o a una página de "No autorizado"
+  // No hay token → redirige a login
+  if (!token) return NextResponse.redirect(new URL("/login", req.url));
+
+  // Validamos JWT
+  let decoded: any;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET!);
+  } catch (err) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  // Protección por rol
+  if (pathname.startsWith("/admin") && decoded.role !== "admin") {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
   return NextResponse.next();
 }
 
+// Aplica middleware a todas las rutas excepto recursos estáticos
 export const config = {
-  // 2. Expandimos el matcher para cubrir ambas rutas
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/api/users/:path*"],
+  matcher: ["/((?!_next|favicon.ico|api|imagenes|videos).*)"],
 };

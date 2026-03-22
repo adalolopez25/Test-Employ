@@ -1,10 +1,11 @@
 import Container from "@/components/layout/header/Container";
-import "./index.css"; // Asegúrate que el nombre sea correcto
+import "./index.css";
 import Header from "@/components/layout/header/Header";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
-import { Providers } from "@/app/Provider"; // Importamos el cliente de TanStack
+import { Providers } from "@/app/Provider";
+import ProtectedApp from "@/app/protectedApp/page"; // Tu advertencia de clave
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -17,13 +18,16 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
       <body className="min-h-screen flex flex-col bg-[#050505]" suppressHydrationWarning>
         <Providers>
-          <Container>
-            <Header />
-            <main className="flex-1 w-full">
-              {children}
-            </main>
-          </Container>
-          
+          {/* 🔒 Aquí envolvemos toda la app en ProtectedApp */}
+          <ProtectedApp>
+            <Container>
+              <Header />
+              <main className="flex-1 w-full">
+                {children}
+              </main>
+            </Container>
+          </ProtectedApp>
+
           {/* TOASTER CONFIGURADO PARA LA CÁPSULA EN LA ESQUINA */}
           <Toaster 
             position="bottom-right" 
@@ -31,7 +35,6 @@ export default function RootLayout({
             expand={false}        
             visibleToasts={3}
             toastOptions={{
-              // Quitamos estilos de aquí para que el toast.custom tenga libertad total
               className: "font-sans",
             }}
           />

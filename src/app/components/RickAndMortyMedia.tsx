@@ -26,8 +26,6 @@ const MEDIA_ITEMS = [
     tag: "Adult Swim Official",
     src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/season2.mp4",
   },
- 
-  
   {
     id: "3",
     title: "Official Trailer | Season 3",
@@ -36,25 +34,25 @@ const MEDIA_ITEMS = [
   },
   {
     id: "4",
-    title: "official Trailer | Season 4",
+    title: "Official Trailer | Season 4",
     tag: "Adult Swim Official",
     src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/season4.mp4",
   },
   {
     id: "5",
-    title: "official Trailer | Season 5 ",
+    title: "Official Trailer | Season 5",
     tag: "Adult Swim Official",
     src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/season5.mp4",
   },
   {
     id: "6",
-    title: "official Trailer | Season 6",
+    title: "Official Trailer | Season 6",
     tag: "Adult Swim Official",
     src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/season6.mp4",
   },
   {
     id: "7",
-    title: "official Trailer | Season 7",
+    title: "Official Trailer | Season 7",
     tag: "Adult Swim Official",
     src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/season7.mp4",
   },
@@ -70,23 +68,21 @@ const MEDIA_ITEMS = [
     tag: "Adult Swim Official",
     src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/Peek.mp4",
   },
-   {
+  {
     id: "10",
-    title: "The Anime Series | extras",
+    title: "The Anime Series | Extras",
     tag: "Rick and Morty Anime",
     src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Videos/season/extras.mp4",
   },
 ];
 
 export function RickAndMortyMedia() {
-  const [activeVideo, setActiveVideo] = useState<
-    (typeof MEDIA_ITEMS)[0] | null
-  >(null);
+  const [activeVideo, setActiveVideo] = useState<(typeof MEDIA_ITEMS)[0] | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
-    const scrollAmount = scrollRef.current.clientWidth * 0.8; // desplazamiento del 80% del ancho visible
+    const scrollAmount = scrollRef.current.clientWidth * 0.8;
     if (direction === "left") {
       scrollRef.current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
     } else {
@@ -97,7 +93,7 @@ export function RickAndMortyMedia() {
   return (
     <section className="w-full px-4 md:px-8 py-24 mb-20 bg-transparent">
       <div className="max-w-[1400px] mx-auto w-full">
-        {/* Encabezado Estilo AnimeHero */}
+        {/* Header */}
         <div className="mb-14 pl-6 border-l-4 border-blue-600">
           <span className="text-blue-500 font-bold uppercase tracking-[0.4em] text-[10px] block mb-2">
             Trailers
@@ -107,31 +103,24 @@ export function RickAndMortyMedia() {
           </h2>
         </div>
 
-        {/* Carrusel Horizontal */}
+        {/* Carrusel */}
         <div className="relative flex items-center">
-          {/* Botón Izquierda */}
           <button
             onClick={() => scroll("left")}
-            className="absolute -left-8 top-15  z-20 bg-black/40 hover:bg-blue-600 text-white p-3 rounded-full transition-all shadow-lg"
+            className="absolute -left-8 top-15 z-20 bg-black/40 hover:bg-blue-600 text-white p-3 rounded-full transition-all shadow-lg"
           >
             <ChevronLeft size={24} />
           </button>
 
-          {/* Contenedor de scroll */}
           <div
             ref={scrollRef}
             className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide px-8 py-2"
           >
             {MEDIA_ITEMS.map((item) => (
-              <VideoCard
-                key={item.id}
-                {...item}
-                onOpen={() => setActiveVideo(item)}
-              />
+              <VideoCard key={item.id} {...item} onOpen={() => setActiveVideo(item)} />
             ))}
           </div>
 
-          {/* Botón Derecha */}
           <button
             onClick={() => scroll("right")}
             className="absolute -right-15 top-15 z-20 bg-black/40 hover:bg-blue-600 text-white p-3 rounded-full transition-all shadow-lg"
@@ -141,33 +130,28 @@ export function RickAndMortyMedia() {
         </div>
       </div>
 
-      {/* --- MODAL CON REPRODUCTOR CUSTOM AZUL --- */}
-      {activeVideo && (
-        <VideoModal video={activeVideo} onClose={() => setActiveVideo(null)} />
-      )}
+      {/* Modal */}
+      {activeVideo && <VideoModal video={activeVideo} onClose={() => setActiveVideo(null)} />}
     </section>
   );
 }
 
-// --- SUB-COMPONENTE: TARJETA CON HOVER PREVIEW ---
-function VideoCard({
-  src,
-  title,
-  tag,
-  onOpen,
-}: {
-  src: string;
-  title: string;
-  tag: string;
-  onOpen: () => void;
-}) {
+// --- Video Card ---
+function VideoCard({ src, title, tag, onOpen }: { src: string; title: string; tag: string; onOpen: () => void; }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const handleHover = (videoEl: HTMLVideoElement | null) => {
+    document.querySelectorAll("video").forEach((v) => {
+      if (v !== videoEl) {
+        v.pause();
+        v.currentTime = 0;
+      }
+    });
+    videoEl?.play().catch(() => {});
+  };
+
   return (
-    <div
-      className="group flex flex-col gap-4 cursor-pointer w-[280px] flex-shrink-0"
-      onClick={onOpen}
-    >
+    <div className="group flex flex-col gap-4 cursor-pointer w-[280px] flex-shrink-0" onClick={onOpen}>
       <div className="relative aspect-video w-full rounded-[2rem] overflow-hidden border border-white/10 bg-white/[0.03] transition-all duration-500 group-hover:border-blue-500/50 shadow-2xl">
         <video
           ref={videoRef}
@@ -176,7 +160,8 @@ function VideoCard({
           muted
           loop
           playsInline
-          onMouseEnter={() => videoRef.current?.play().catch(() => {})}
+          preload="metadata"
+          onMouseEnter={() => handleHover(videoRef.current)}
           onMouseLeave={() => {
             if (videoRef.current) {
               videoRef.current.pause();
@@ -191,29 +176,26 @@ function VideoCard({
         </div>
       </div>
       <div>
-        <span className="text-blue-500 text-[10px] font-black uppercase tracking-[0.3em] mb-1 block">
-          {tag}
-        </span>
-        <h3 className="text-2xl font-black italic uppercase text-white tracking-tighter leading-tight group-hover:text-blue-500 transition-colors duration-300">
-          {title}
-        </h3>
+        <span className="text-blue-500 text-[10px] font-black uppercase tracking-[0.3em] mb-1 block">{tag}</span>
+        <h3 className="text-2xl font-black italic uppercase text-white tracking-tighter leading-tight group-hover:text-blue-500 transition-colors duration-300">{title}</h3>
       </div>
     </div>
   );
 }
 
-// --- SUB-COMPONENTE: MODAL REPRODUCTOR AZUL ---
+// --- Video Modal ---
 function VideoModal({ video, onClose }: { video: any; onClose: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
   const [hasError, setHasError] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(false);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
     if (videoRef.current.paused) {
-      videoRef.current.play();
+      videoRef.current.play().catch(() => {});
       setIsPlaying(true);
     } else {
       videoRef.current.pause();
@@ -222,10 +204,8 @@ function VideoModal({ video, onClose }: { video: any; onClose: () => void }) {
   };
 
   const handleProgress = () => {
-    if (videoRef.current) {
-      setProgress(
-        (videoRef.current.currentTime / videoRef.current.duration) * 100,
-      );
+    if (videoRef.current && videoRef.current.duration) {
+      setProgress((videoRef.current.currentTime / videoRef.current.duration) * 100);
     }
   };
 
@@ -239,74 +219,59 @@ function VideoModal({ video, onClose }: { video: any; onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 md:p-10">
-      <div
-        className="absolute inset-0 bg-black/95 backdrop-blur-3xl"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/95 backdrop-blur-3xl" onClick={onClose} />
       <div className="relative w-full max-w-5xl bg-black rounded-[3rem] overflow-hidden border border-blue-500/20 shadow-[0_0_100px_rgba(37,99,235,0.2)]">
         {hasError ? (
           <div className="aspect-video w-full flex flex-col items-center justify-center text-red-500">
             <AlertCircle size={48} className="mb-4" />
-            <p className="font-black uppercase tracking-widest text-sm">
-              Error de decodificación de video
-            </p>
+            <p className="font-black uppercase tracking-widest text-sm">Error de decodificación de video</p>
           </div>
         ) : (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted={isMuted}
-            onTimeUpdate={handleProgress}
-            onError={() => setHasError(true)}
-            onClick={togglePlay}
-            className="w-full aspect-video object-contain"
-          >
-            <source src={video.src} type="video/mp4" />
-          </video>
+          <div className="relative">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted={isMuted}
+              onTimeUpdate={handleProgress}
+              onError={() => setHasError(true)}
+              onWaiting={() => setIsBuffering(true)}
+              onCanPlay={() => setIsBuffering(false)}
+              onClick={togglePlay}
+              className="w-full aspect-video object-contain"
+            >
+              <source src={video.src} type="video/mp4" />
+            </video>
+            {isBuffering && (
+              <div className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold bg-black/40">
+                Cargando...
+              </div>
+            )}
+          </div>
         )}
 
         {/* CONTROLES */}
         <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black via-black/90 to-transparent">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
-              <button
-                onClick={togglePlay}
-                className="text-white hover:text-blue-500"
-              >
+              <button onClick={togglePlay} className="text-white hover:text-blue-500">
                 {isPlaying ? <Pause size={28} /> : <Play size={28} />}
               </button>
-              <button
-                onClick={() => setIsMuted(!isMuted)}
-                className="text-white hover:text-blue-500"
-              >
+              <button onClick={() => setIsMuted(!isMuted)} className="text-white hover:text-blue-500">
                 {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
               </button>
               <div className="hidden md:block">
-                <h4 className="text-white font-black italic uppercase text-lg tracking-tighter">
-                  {video.title}
-                </h4>
-                <p className="text-blue-500 font-bold text-[10px] uppercase tracking-[0.3em]">
-                  {video.tag}
-                </p>
+                <h4 className="text-white font-black italic uppercase text-lg tracking-tighter">{video.title}</h4>
+                <p className="text-blue-500 font-bold text-[10px] uppercase tracking-[0.3em]">{video.tag}</p>
               </div>
             </div>
-            <button
-              onClick={onClose}
-              className="bg-white/10 hover:bg-red-500 text-white p-3 rounded-full"
-            >
+            <button onClick={onClose} className="bg-white/10 hover:bg-red-500 text-white p-3 rounded-full">
               <X size={20} />
             </button>
           </div>
 
-          <div
-            className="w-full h-1.5 bg-white/10 rounded-full mt-4 cursor-pointer"
-            onClick={seek}
-          >
-            <div
-              className="h-full bg-blue-600 transition-all"
-              style={{ width: `${progress}%` }}
-            />
+          <div className="w-full h-1.5 bg-white/10 rounded-full mt-4 cursor-pointer" onClick={seek}>
+            <div className="h-full bg-blue-600 transition-all" style={{ width: `${progress}%` }} />
           </div>
         </div>
       </div>

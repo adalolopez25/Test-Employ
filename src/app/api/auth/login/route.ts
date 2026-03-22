@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     // 3. Generamos el Token JWT
     const token = jwt.sign(
       { userId: user._id, role: user.role }, // Guardamos el rol dentro del token tmb
-      process.env.JWT_SECRET || "secreto_rick_morty",
+      process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     const roleValue : string = user.role.toString();
     // Cookie de Rol (Para que el Middleware decida rápido)
     response.cookies.set("user-role", roleValue, {
-      httpOnly: false, // Esta sí la puede leer el cliente si quiere
+      httpOnly: false, 
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7,

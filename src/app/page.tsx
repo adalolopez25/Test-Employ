@@ -3,7 +3,7 @@ import { AboutSeries } from "@/app/components/AboutSeries";
 import { RickAndMortyMedia } from "@/app/components/RickAndMortyMedia";
 import { GlobalStats } from "@/app/components/GlobalStats";
 import { CharacterRow } from "./components/CharacterRows";
-import ProtectedApp from "./protected/page";
+import ProtectedApp from "./protectedApp/page";
 
 export default function HomePage() {
   return (
