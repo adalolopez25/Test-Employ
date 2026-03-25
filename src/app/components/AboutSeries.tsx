@@ -30,13 +30,10 @@ export function AboutSeries() {
 
   return (
     <section className="w-full px-4 md:px-8 py-12 bg-transparent">
-      <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-8">
+      <div className="max-w-300 mx-auto flex flex-col lg:flex-row gap-8">
 
-        {/* Lado Izquierdo: Descripción */}
         <div className="flex-2 bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 flex flex-col justify-center">
-          <span className="text-blue-500 font-bold uppercase tracking-[0.3em] text-[10px] mb-4">
-            Base de Datos Interactiva
-          </span>
+          
           <h2 className="text-4xl md:text-6xl font-black italic uppercase tracking-tight text-white mb-4 leading-tight">
             {seriesData.title} <br />
             <span className="text-blue-600">{seriesData.subtitle}</span>
@@ -46,8 +43,7 @@ export function AboutSeries() {
           </p>
         </div>
 
-        {/* Lado Derecho: Temporadas y episodios */}
-        <div className="flex-1 flex flex-col gap-4 max-h-[600px] overflow-y-auto">
+        <div className="flex-1 flex flex-col gap-4 max-h-150 overflow-y-auto">
 
           {/* Totales */}
           <div className="flex justify-between mb-4 gap-2">
@@ -61,12 +57,10 @@ export function AboutSeries() {
             </div>
           </div>
 
-          {/* Lista de temporadas */}
           {seriesData.seasons.map((s) => {
             const isOpen = openSeason === s.season;
             return (
               <div key={s.season} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-                {/* Botón de temporada */}
                 <button
                   onClick={() => toggleSeason(s.season)}
                   className="w-full text-left px-4 py-3 flex justify-between items-center text-white font-bold hover:bg-blue-600/20 transition-colors"
@@ -75,7 +69,6 @@ export function AboutSeries() {
                   <span>{isOpen ? "▲" : "▼"}</span>
                 </button>
 
-                {/* Episodios con animación tipo slide */}
                 <div
                   className={`overflow-hidden transition-all duration-500`}
                   style={{ maxHeight: isOpen ? `${s.episodes * 2.5}rem` : "0" }}

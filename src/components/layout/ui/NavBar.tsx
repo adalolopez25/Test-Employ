@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { useFavoriteStore } from "@/hooks/store/useFavoriteStore";
 import { LogOut, User as UserIcon, Heart, ChevronDown } from "lucide-react";
-import { AuthModal } from "@/components/AuthModal";
+import { AuthModal } from "@/components/forms/ui/AuthModal";
 
 interface NavLinkItem {
   title: string;
@@ -135,7 +135,6 @@ const NavBar = () => {
                 />
               </button>
 
-              {/* 🔽 DROPDOWN OPTIMIZADO */}
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-3 w-56 bg-[#0a0a0a]/95 border border-white/10 rounded-2xl p-4 shadow-xl z-50 animate-in slide-in-from-top-2 duration-200">
                   
@@ -181,20 +180,20 @@ const NavBar = () => {
                     </Link>
 
                     <div className="h-px bg-white/5 my-2" />
-
                     <button
-                      onClick={() => {
-                        setIsDropdownOpen(false);
-                        logout();
-                      }}
-                      className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-red-500/10 transition text-red-500"
-                    >
-                      <LogOut size={16} />
-                      <span className="text-xs font-medium">
-                        Cerrar sesión
-                      </span>
-                    </button>
-                  </nav>
+  onClick={() => {
+    setIsDropdownOpen(false);
+    logout(); // Llama a la nueva función que borra cookies
+    
+    // Opcional: Forzar redirección al inicio y refrescar el router 
+    // para que el Middleware valide de nuevo
+    window.location.href = "/"; 
+  }}
+  className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-red-500/10 transition text-red-500"
+>
+  <LogOut size={16} />
+  <span className="text-xs font-medium">Cerrar sesión</span>
+</button>                  </nav>
                 </div>
               )}
             </div>
@@ -203,7 +202,7 @@ const NavBar = () => {
               onClick={() => setIsAuthModalOpen(true)}
               className="relative overflow-hidden group px-10 py-3 rounded-full border border-blue-600/30 text-white font-black italic uppercase text-xs tracking-[0.2em] hover:border-blue-500 transition-all"
             >
-              <span className="relative z-10">Acceder al Sistema</span>
+              <span className="relative z-10">Iniciar Sesion</span>
               <div className="absolute inset-0 bg-blue-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 opacity-20" />
             </button>
           )}

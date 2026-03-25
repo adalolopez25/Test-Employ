@@ -1,44 +1,49 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get("session")?.value;
+  const userRole = req.cookies.get("user-role")?.value;
   const { pathname } = req.nextUrl;
 
-  // Rutas públicas
-  const publicRoutes = ["/", "/login", "/blocked"];
-  if (
-    publicRoutes.includes(pathname) ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/images") ||
-    pathname.startsWith("/videos") ||
-    pathname.startsWith("/api") ||
-    pathname === "/favicon.ico"
-  ) {
-    return NextResponse.next();
+  const authRoutes = ["/login", "/register"];
+  const privateRoutes = ["/perfil", "/profile", "/favoritos", "/favorites", "/dashboard"]; 
+  const adminRoutes = ["/admin"];
+
+  // CASO A: Usuario con sesión activa intenta ir al Login/Registro
+  if (token && authRoutes.includes(pathname)) {
+    return NextResponse.redirect(new URL("/characters", req.url));
   }
 
-  // No hay token → redirige a login
-  if (!token) return NextResponse.redirect(new URL("/login", req.url));
-
-  // Validamos JWT
-  let decoded: any;
-  try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET!);
-  } catch (err) {
-    return NextResponse.redirect(new URL("/login", req.url));
+  // CASO B: Usuario SIN sesión intenta acceder a rutas privadas
+  const isTryingToAccessPrivate = privateRoutes.some(route => pathname.startsWith(route));
+  if (!token && isTryingToAccessPrivate) {
+    const loginUrl = new URL("/login", req.url);
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
-  // Protección por rol
-  if (pathname.startsWith("/admin") && decoded.role !== "admin") {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+  // CASO C: Protección de Administrador
+  const isTryingToAccessAdmin = adminRoutes.some(route => pathname.startsWith(route));
+  if (isTryingToAccessAdmin) {
+    if (!token) return NextResponse.redirect(new URL("/login", req.url));
+    if (userRole !== "admin") {
+      return NextResponse.redirect(new URL("/characters", req.url));
+    }
   }
 
   return NextResponse.next();
 }
 
-// Aplica middleware a todas las rutas excepto recursos estáticos
+// --- CONFIGURACIÓN DEL MATCHER ---
 export const config = {
-  matcher: ["/((?!_next|favicon.ico|api|imagenes|videos).*)"],
+  matcher: [
+    "/perfil/:path*", 
+    "/favoritos/:path*", 
+    "/favorites/:path*", 
+    "/dashboard/:path*", 
+    "/admin/:path*", 
+    "/login", 
+    "/register"
+  ],
 };

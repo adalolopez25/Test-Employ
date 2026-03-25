@@ -2,12 +2,11 @@ import Container from "@/components/layout/header/Container";
 import "./index.css";
 import Header from "@/components/layout/header/Header";
 import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 import { Providers } from "@/app/Provider";
-import ProtectedApp from "@/app/protectedApp/page"; // Tu advertencia de clave
+import { ScrollToTop } from "./characters/components/ScrollToTop";
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export default function RootLayout({
   children,
@@ -15,29 +14,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
-      <body className="min-h-screen flex flex-col bg-[#050505]" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning className={geist.variable}>
+      {/* Forzamos el fondo oscuro global aquí */}
+      <body className="min-h-screen flex flex-col bg-[#050505] text-white antialiased">
         <Providers>
-          {/* 🔒 Aquí envolvemos toda la app en ProtectedApp */}
-          <ProtectedApp>
-            <Container>
-              <Header />
-              <main className="flex-1 w-full">
-                {children}
-              </main>
-            </Container>
-          </ProtectedApp>
-
-          {/* TOASTER CONFIGURADO PARA LA CÁPSULA EN LA ESQUINA */}
-          <Toaster 
-            position="bottom-right" 
-            theme="dark"           
-            expand={false}        
-            visibleToasts={3}
-            toastOptions={{
-              className: "font-sans",
-            }}
-          />
+          <Container>
+            <Header />
+            <main className="flex-1 w-full relative">
+              {children}
+              <ScrollToTop />
+            </main>
+          </Container>
+          <Toaster position="top-right" theme="dark" closeButton />
         </Providers>
       </body>
     </html>

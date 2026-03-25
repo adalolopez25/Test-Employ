@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     // 3. Generamos el Token JWT
     const token = jwt.sign(
       { userId: user._id, role: user.role }, // Guardamos el rol dentro del token tmb
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET as string,
       { expiresIn: "7d" }
     );
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ThemeProvider as NextThemesProvider } from "next-themes"; // Importante instalar: npm install next-themes
+import { SessionProvider } from "next-auth/react";
 import { useState } from "react";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -17,17 +17,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }));
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {/* Envolvemos todo con el ThemeProvider. 
-          attribute="class" permite que Tailwind use la clase .dark 
-      */}
-      <NextThemesProvider 
-        attribute="class" 
-        defaultTheme="dark" 
-        enableSystem={true}
-      >
+    <SessionProvider>
+      <QueryClientProvider client={queryClient}>
+        {/* Eliminamos NextThemesProvider ya que tu app es nativamente oscura */}
         {children}
-      </NextThemesProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </SessionProvider>
   );
 }

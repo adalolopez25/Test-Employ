@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
-import Link from "next/link"; // Usamos Link de Next.js para la navegación
+import Link from "next/link";
 
 const CHARACTERS = Array.from({ length: 15 }, (_, i) => ({
   id: i + 1,
@@ -25,19 +25,18 @@ export function CharacterRow() {
 
   return (
     <section className="w-full py-20 bg-transparent group/section overflow-hidden">
-      <div className="max-w-[1400px] mx-auto px-8 mb-10 flex justify-between items-end">
+      <div className="max-w-350 mx-auto px-8 mb-10 flex justify-between items-end">
         <div className="border-l-4 border-blue-600 pl-6">
           <h2 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter text-white leading-none">
             Personajes <span className="text-blue-600 font-black">Principales</span>
           </h2>
         </div>
         
-        {/* Enlace rápido opcional arriba (opcional, el principal está en la grilla) */}
         <Link 
           href="/characters" 
           className="hidden md:flex items-center gap-2 text-blue-500 font-black uppercase italic tracking-widest text-[10px] hover:text-white transition-colors group/link"
         >
-           Bases de Datos
+           Ver Mas + 
           <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
         </Link>
       </div>
@@ -58,15 +57,15 @@ export function CharacterRow() {
               <div 
                 key={char.id}
                 className={`
-                  relative h-[400px] md:h-[480px] min-w-[220px] md:min-w-[260px] 
-                  hover:min-w-[420px] md:hover:min-w-[480px] 
+                  relative h-100 md:h-120 min-w-55 md:min-w-65 
+                  hover:min-w-105 md:hover:min-w-120
                   transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]
                   group/card cursor-pointer rounded-[2.5rem] overflow-hidden
                   ${isLast ? 'origin-right' : 'origin-left'}
                 `}
               >
                 <img src={char.image} alt={char.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover/card:scale-110" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-60 group-hover/card:opacity-90" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/90 via-transparent to-transparent opacity-60 group-hover/card:opacity-90" />
                 <div className="absolute inset-0 p-8 flex flex-col justify-end">
                   <div className="translate-y-4 group-hover/card:translate-y-0 transition-transform duration-500">
                     <h3 className="text-2xl font-black italic uppercase text-white tracking-tighter leading-tight group-hover/card:text-4xl transition-all duration-500">{char.name}</h3>

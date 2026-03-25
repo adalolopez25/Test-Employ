@@ -10,7 +10,9 @@ const nextConfig = {
         pathname: '/api/character/avatar/**',
       },
     ],
+    formats : ['image/avif', 'image/webp'],
   },
+  swcMinify: true,
   
 };
 

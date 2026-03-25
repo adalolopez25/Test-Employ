@@ -1,204 +1,169 @@
 "use client";
 
-import React, { useState } from "react";
-import type { Character } from "@/types/character";
+import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Heart as HeartIcon } from "lucide-react";
-import { useAuthStore } from "@/hooks/store/useAuthStore"
+import { Heart as HeartIcon, ShieldAlert, LogIn, Plus } from "lucide-react";
+import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { useFavoriteStore } from "@/hooks/store/useFavoriteStore"; 
-; 
+import Image from "next/image";
+import { fetcher } from "@/lib/api-client";
+import { useQueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner"; 
 
-
-interface CardProps {
-  character: Character;
-  rating?: number;
-  onRate?: (id: number, value: number) => void;
-  onOpen?: () => void;
-  isFavorite?: boolean;
-  onToggleFavorite?: (id: number, value: boolean) => void;
-}
-
-export const Card = ({
-  character,
-  rating = 0,
-  onRate,
-  onOpen,
-  isFavorite = false,
-  onToggleFavorite,
-}: CardProps) => {
+export const Card = ({ character, rating = 0, onRate }: any) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [hoveredStar, setHoveredStar] = useState(0);
-  const [favorite, setFavorite] = useState(isFavorite);
   const [showLoginAlert, setShowLoginAlert] = useState(false);
 
-  const addFavorite  =  useFavoriteStore((state) => state.addFavorite);
+  // --- STORES ---
+  const user = useAuthStore((state) => state.user); //
+  const addFavorite = useFavoriteStore((state) => state.addFavorite);
   const removeFavorite = useFavoriteStore((state) => state.removeFavorite);
-  // Obtenemos el usuario actual desde zustand
-  const user = useAuthStore((state) => state.user);
-  const isLoggedIn = Boolean(user);
+  const favorites = useFavoriteStore((state) => state.favorites);
 
-  const handleUpdateInteraction = async (rating: number, isFavorite: boolean) => {
-    if (!user) return; // No enviamos nada si no hay sesión
+  // Verificamos si es favorito solo si hay un usuario activo
+  const isFavorite = useMemo(() => 
+    user ? favorites.some((fav: any) => fav.id === character.id) : false, 
+    [favorites, character.id, user]
+  );
 
-    try {
-      const response = await fetch("/api/ratings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          characterId: character.id,
-          userId: user.id, // <-- usamos el id real
-          rating,
-          isFavorite,
-          name: character.name,
-          image: character.image,
-          status: character.status,
-          species: character.species,
-          origin: character.origin.name,
-          location: character.location.name,
-          type: character.type,
-          gender: character.gender,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Error al guardar en BD");
-      const data = await response.json();
-      console.log("Sincronizado con MongoDB:", data);
-    } catch (error) {
-      console.error("Fallo la conexión con el servidor:", error);
-    }
+  const handlePrefetch = () => {
+    queryClient.prefetchQuery({
+      queryKey: ["character", String(character.id)],
+      queryFn: () => fetcher(`https://rickandmortyapi.com/api/character/${character.id}`),
+    });
   };
 
-  const handleCardClick = () => {
-    onOpen?.();
-    router.push(`//${character.id}`);
+  const handleRateClick = (e: React.MouseEvent, value: number) => {
+    e.stopPropagation();
+    if (!user) {
+      toast.custom((t) => (
+        <div className="relative overflow-hidden bg-slate-900 border border-red-500/30 p-4 rounded-xl shadow-2xl flex items-center flex-col gap-3 animate-in fade-in slide-in-from-right-4">
+          <ShieldAlert className="text-red-500" size={20} />
+          <p className="text-white text-xs font-bold uppercase tracking-tighter">Acceso Denegado</p>
+          <span className="text-gray-400 text-sm"> Debes iniciar sesión para calificar </span>
+          <div className="absolute bottom-0 left-0 h-1 bg-red-500 animate-shrink-width" style={{ width: '100%' }} />
+        </div>
+      ), { position: "top-right", duration: 4000 });
+      return;
+    }
+    onRate?.(character.id, value);
   };
 
   const toggleFavorite = (e: React.MouseEvent) => {
-  e.stopPropagation();
+    e.stopPropagation();
 
-  if (!user) {
-    setShowLoginAlert(true);
-    return;
-  }
+    // BLOQUEO: Si no hay usuario, mostramos la alerta y salimos de la función
+    if (!user) {
+      setShowLoginAlert(true);
+      return;
+    }
 
-  if (!favorite) {
-    addFavorite(character); // agrega al store
-  } else {
-    removeFavorite(character.id); // elimina del store
-  }
-
-  setFavorite(!favorite);
-  handleUpdateInteraction(rating, !favorite);
-};
+    // Si hay usuario, procedemos con la lógica normal
+    if (isFavorite) {
+      removeFavorite(character.id);
+    } else {
+      addFavorite(character);
+    }
+  };
 
   return (
-    <>
-      <div
-        onClick={handleCardClick}
-        className="group relative w-full max-w-70 h-105 rounded-2xl overflow-hidden shadow-xl cursor-pointer bg-slate-950 transition-all duration-500 ease-[cubic-bezier(0.17,0.67,0.3,1)] hover:-translate-y-4 hover:shadow-2xl hover:shadow-black/60"
+    <div
+      onClick={() => !showLoginAlert && router.push(`/info/${character.id}`)}
+      onMouseEnter={handlePrefetch}
+      className="group relative w-full h-105 rounded-3xl overflow-hidden bg-slate-950 border border-white/5 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/10"
+    >
+      <Image
+        src={character.image}
+        alt={character.name}
+        fill
+        priority={character.id <= 4}
+        className="object-cover transition-transform duration-1000 group-hover:scale-110 opacity-70"
+      />
+
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
+
+      {/* Botón Corazón - Siempre visible, pero condicionado por 'user' para el color */}
+      <button
+        onClick={toggleFavorite}
+        className="absolute top-5 right-5 z-50 p-2.5 rounded-full bg-black/40 backdrop-blur-md hover:bg-white/10 transition-all active:scale-75"
       >
-        <img
-          src={character.image}
-          alt={character.name}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.17,0.67,0.3,1)] group-hover:scale-110"
+        <HeartIcon 
+          fill={isFavorite && user ? "#ef4444" : "transparent"} 
+          stroke={isFavorite && user ? "#ef4444" : "white"} 
+          size={20} 
         />
+      </button>
 
-        <div className="absolute inset-0 bg-linear-to-t from-black via-black/40 to-transparent opacity-80 z-10" />
-
-        {/* Corazón favoritos */}
-        <button
-          onClick={toggleFavorite}
-          className="absolute top-4 right-4 z-50 p-3 rounded-full  shadow-lg"
-        >
-          <HeartIcon
-            fill={favorite ? "red" : "white"}
-            size={28}
-            className={`transition-colors duration-300 ${
-              favorite ? `hover:scale-130` : `hover:scale-130 hover:transition-transform hover:animate-out`
-            }`}
-          />
-        </button>
-
-        {/* Botón "View Details" */}
-        <div className="absolute top-[20%] left-1/2 -translate-x-1/2 -translate-y-1/2 scale-75 opacity-0 z-30 transition-all duration-500 ease-out group-hover:scale-100 group-hover:opacity-100 px-6 py-2.5 rounded-full border border-white/40 bg-blue-500 backdrop-blur-md text-[10px] font-bold tracking-[2px] uppercase text-white whitespace-nowrap">
-          View details
+      {/* --- ALERTA DE NEXO PROTEGIDO (Tu diseño original) --- */}
+      <div className={cn(
+        "absolute inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-8 transition-all duration-500 ease-in-out",
+        showLoginAlert ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+      )}>
+        <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-4 border border-blue-500/20">
+          <LogIn className="text-blue-500" size={28} />
         </div>
-
-        {/* Nombre */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 text-center z-20 transition-all duration-500 group-hover:translate-y-10 group-hover:opacity-0">
-          <h3 className="text-white text-xl font-extrabold drop-shadow-md">
-            {character.name}
-          </h3>
-        </div>
-
-        {/* Información al hover */}
-        <div className="absolute inset-0 flex flex-col justify-end p-6 z-20 bg-linear-to-t from-slate-900 via-slate-900/90 to-transparent translate-y-full transition-transform duration-500 ease-in-out group-hover:translate-y-0">
-          <div className="mb-4">
-            <h4 className="text-white text-lg font-bold mb-3">{character.name}</h4>
-            <div className="space-y-1.5 text-xs text-slate-300">
-              <p>
-                <span className="text-slate-500 uppercase tracking-tighter mr-1">Status:</span>{" "}
-                <b className="text-slate-100">{character.status}</b>
-              </p>
-              <p>
-                <span className="text-slate-500 uppercase tracking-tighter mr-1">Species:</span>{" "}
-                <b className="text-slate-100">{character.species}</b>
-              </p>
-              <p>
-                <span className="text-slate-500 uppercase tracking-tighter mr-1">Origin:</span>{" "}
-                <b className="text-slate-100">{character.origin.name}</b>
-              </p>
-              <p>
-                <span className="text-slate-500 uppercase tracking-tighter mr-1">Location:</span>{" "}
-                <b className="text-slate-100">{character.location.name}</b>
-              </p>
-            </div>
-          </div>
-
-          {onRate && (
-            <div
-              className="flex justify-center gap-1.5 pt-4 border-t border-white/10"
-              onMouseLeave={() => setHoveredStar(0)}
-            >
-              {[1, 2, 3, 4, 5].map((n) => {
-                const isFilled = hoveredStar ? hoveredStar >= n : rating >= n;
-                return (
-                  <span
-                    key={n}
-                    onMouseEnter={() => setHoveredStar(n)}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onRate(character.id, n);
-                      handleUpdateInteraction(n, favorite);
-                    }}
-                    className={`text-xl cursor-pointer transition-transform duration-200 hover:scale-125 ${
-                      isFilled ? "text-yellow-400" : "text-slate-600"
-                    }`}
-                  >
-                    ★
-                  </span>
-                );
-              })}
-            </div>
-          )}
+        <p className="text-white font-black text-xs uppercase italic tracking-[2px] mb-6">Nexo Protegido</p>
+        <div className="flex flex-col gap-2 w-full">
+          <button 
+            onClick={(e) => { e.stopPropagation(); router.push('/login'); }} 
+            className="py-3 bg-blue-600 text-[10px] font-black rounded-lg text-white uppercase italic hover:bg-blue-500 transition-colors"
+          >
+            Entrar al Sistema
+          </button>
+          <button 
+            onClick={(e) => { e.stopPropagation(); setShowLoginAlert(false); }} 
+            className="py-3 bg-slate-800 text-[10px] font-black rounded-lg text-slate-400 uppercase italic hover:bg-slate-700 transition-colors"
+          >
+            Abortar
+          </button>
         </div>
       </div>
 
-      {/* Modal de alerta si no está logeado */}
-      {showLoginAlert && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowLoginAlert(false)}>
-          <div className="bg-slate-900 p-6 rounded-xl max-w-xs text-center" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-white font-bold mb-2">Necesitas iniciar sesión</h3>
-            <p className="text-slate-300 mb-4">Para agregar favoritos, primero debes iniciar sesión.</p>
-            <button
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
-              onClick={() => setShowLoginAlert(false)}
-            >
-              Cerrar
-            </button>
-          </div>
+      {/* --- INFORMACIÓN DEL PERSONAJE --- */}
+      <div className="absolute inset-x-0 bottom-0 p-8 z-20 transition-transform duration-500 ease-[cubic-bezier(0.17,0.67,0.3,1)] group-hover:-translate-y-24">
+        <h3 className="text-white text-2xl font-black italic uppercase leading-[0.9] mb-3 tracking-tighter drop-shadow-2xl">
+          {character.name}
+        </h3>
+        <div className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] space-y-1 opacity-80">
+          <p>Status: <span className={character.status === 'Alive' ? 'text-emerald-400' : 'text-red-500'}>{character.status}</span></p>
+          <p>Species: <span className="text-slate-200">{character.species}</span></p>
         </div>
-      )}
-    </> 
+      </div>
+
+      {/* --- HOVER CONTROLS --- */}
+      <div className="absolute inset-x-0 bottom-8 z-30 opacity-0 translate-y-8 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:translate-y-0 flex flex-col items-center gap-4">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push(`/info/${character.id}`);
+          }}
+          className="absolute bottom-12 flex items-center gap-2 px-5 py-2 bg-blue-600/90 hover:bg-blue-500 text-white text-[10px] font-black uppercase italic rounded-full border border-blue-400/30 shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all active:scale-95"
+        >
+          Info <Plus size={14} strokeWidth={3} />
+        </button>
+
+        {/* Sistema de Estrellas */}
+        <div className="flex gap-2 justify-center pt-4 border-t border-white/5 w-full max-w-[80%]" onMouseLeave={() => setHoveredStar(0)}>
+          {[1,2,3,4,5].map((n) => (
+            <span
+              key={n}
+              onMouseEnter={() => setHoveredStar(n)}
+              onClick={(e) => handleRateClick(e, n)}
+              className={cn(
+                "text-2xl cursor-pointer transition-all duration-300 hover:scale-150 active:scale-90",
+                (hoveredStar >= n || (!hoveredStar && rating >= n)) 
+                  ? "text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]" 
+                  : "text-slate-700"
+              )}
+            >
+              ★
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
