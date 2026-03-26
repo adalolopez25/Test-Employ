@@ -6,18 +6,15 @@ import { useAuthStore } from "@/core/hooks/store/useAuthStore";
 import { fetcher } from "@/lib/api-client";
 import { toast } from "sonner";
 import { signIn } from "next-auth/react";
-import Image from "next/image";
+import type { RegisterResponse } from "@/core/types/register/RegisterResponse";
+import type { RegisterFormProps } from "@/core/types/register/RegisterFormProps";
 
-interface RegisterFormProps {
-  onSuccess?: () => void;
-  redirectPath?: string;
-}
 
 export const RegisterForm = ({ onSuccess, redirectPath = "/characters" }: RegisterFormProps) => {
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const setAuth = useAuthStore((state) => state.setAuth);
+  const setUser = useAuthStore((state) => state.setUser);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,12 +22,12 @@ export const RegisterForm = ({ onSuccess, redirectPath = "/characters" }: Regist
     setError("");
 
     try {
-      const data = await fetcher<any>("/api/auth/register", {
+      const data = await fetcher<RegisterResponse>("/api/auth/register", {
         method: "POST",
         body: JSON.stringify(formData),
       });
 
-      setAuth(data.user, data.token);
+      setUser(data.user);
       toast.success("Registro Completado");
       
       if (onSuccess) {
@@ -106,7 +103,7 @@ export const RegisterForm = ({ onSuccess, redirectPath = "/characters" }: Regist
 
        <button
         type="button"
-        onClick={() => signIn("google", { callbackUrl: redirectPath })}
+        onClick={() => signIn("google", { callbackUrl: "/login" })}
         className="w-full bg-white/5 border border-white/10 hover:border-blue-500/40 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-3 group active:scale-[0.98]"
       >
         <svg className="w-4 h-4 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">

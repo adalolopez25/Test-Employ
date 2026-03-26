@@ -1,5 +1,4 @@
-import mongoose, { Schema, model, models } from "mongoose";
-import { StringDecoder } from "node:string_decoder";
+import mongoose, { Schema, model, models,Model } from "mongoose";
 
 export interface IUser extends mongoose.Document {
   name: string;
@@ -21,4 +20,7 @@ const UserSchema = new Schema({
   }
 }, { timestamps: true });
 
-export default models.User || model("User", UserSchema);
+const User: Model<IUser> = models.User || model<IUser>("User", UserSchema);
+
+
+export default User;

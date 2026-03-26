@@ -1,7 +1,7 @@
 "use client"
 import { BannerCarousel } from "@/components/home/HomeBanner";
 import { AboutSeries } from "@/components/home/AboutSeries";
-import { RickAndMortyMedia } from "@/components/home/RickAndMortyMedia";
+import { RickAndMortyMedia } from "@/components/media/RickAndMortyMedia";
 import { CharacterRow } from "@/components/shared/CharacterRows";
 import { useEffect, useState } from "react";
 import { CardSkeleton } from "@/components/shared/CardSkeleton";

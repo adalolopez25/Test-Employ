@@ -1,6 +1,6 @@
 'use client';
 
-import NavMenu from "@/components/layout/ui/NavBar";
+import NavMenu from "@/components/navbar/NavBar";
 
 export default function Header() {
   return (

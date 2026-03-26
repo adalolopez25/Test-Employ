@@ -23,22 +23,22 @@ export default function About() {
       name: "Next.js 16",
       description:
         "Framework React moderno con SSR y optimización de imágenes.",
-      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/next.png",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/webp/next.webp",
     },
     {
       name: "React 18",
       description: "Librería principal para construir UI reactivas.",
-      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/react.svg",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/webp/react.webp",
     },
     {
       name: "TypeScript",
       description: "Tipado estático para mayor seguridad en el código.",
-      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/ts.png",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/webp/ts.webp",
     },
     {
       name: "TailwindCSS v4",
       description: "Framework de utilidades para diseño rápido y responsivo.",
-      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/tailwindcss.jpeg",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/webp/tailwindcss.webp",
     },
     {
       name: "Lucide React",
@@ -62,12 +62,12 @@ export default function About() {
       name: "MongoDB",
       description:
         "Base de datos principal para personajes, episodios y favoritos.",
-      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/mongo.png",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/webp/mongo.webp",
     },
     {
       name: "Nextjs API",
       description: "Almacena información de calificaciones y atributos únicos.",
-      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/next.png",
+      src: "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/webp/next.webp",
     },
   ];
 

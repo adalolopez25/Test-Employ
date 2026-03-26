@@ -3,8 +3,9 @@
 import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Heart as HeartIcon, ShieldAlert, LogIn, Plus } from "lucide-react";
-import { useAuthStore } from "@/core/hooks/store/useAuthStore";
+import { useSession } from "next-auth/react";
 import { useFavoriteStore } from "@/core/hooks/store/useFavoriteStore"; 
+import { useRatingStore } from "@/core/hooks/store/useRatingStore"; // Importado
 import Image from "next/image";
 import { fetcher } from "@/lib/api-client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -14,20 +15,30 @@ import { toast } from "sonner";
 export const Card = ({ character, rating = 0, onRate }: any) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { data: session } = useSession();
+  const user = session?.user;
+
   const [hoveredStar, setHoveredStar] = useState(0);
   const [showLoginAlert, setShowLoginAlert] = useState(false);
 
   // --- STORES ---
-  const user = useAuthStore((state) => state.user); //
   const addFavorite = useFavoriteStore((state) => state.addFavorite);
   const removeFavorite = useFavoriteStore((state) => state.removeFavorite);
   const favorites = useFavoriteStore((state) => state.favorites);
+  const setRating = useRatingStore((state) => state.setRating); // Acción para guardar
+  const userRatings = useRatingStore((state) => state.ratings); // Para persistir visualmente
 
-  // Verificamos si es favorito solo si hay un usuario activo
+  // Verificamos si es favorito
   const isFavorite = useMemo(() => 
     user ? favorites.some((fav: any) => fav.id === character.id) : false, 
     [favorites, character.id, user]
   );
+
+  // Obtenemos la calificación guardada localmente para este personaje
+  const savedRating = useMemo(() => {
+    const found = userRatings.find(r => r.characterId === character.id);
+    return found ? found.value : rating;
+  }, [userRatings, character.id, rating]);
 
   const handlePrefetch = () => {
     queryClient.prefetchQuery({
@@ -49,19 +60,25 @@ export const Card = ({ character, rating = 0, onRate }: any) => {
       ), { position: "top-right", duration: 4000 });
       return;
     }
+
+    // Guardamos en el Store para persistencia en la vista de calificaciones
+    setRating({
+      characterId: character.id,
+      characterName: character.name,
+      image: character.image,
+      value: value
+    });
+
     onRate?.(character.id, value);
+    toast.success(`${character.name} calificado con ${value} estrellas`);
   };
 
   const toggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
-
-    // BLOQUEO: Si no hay usuario, mostramos la alerta y salimos de la función
     if (!user) {
       setShowLoginAlert(true);
       return;
     }
-
-    // Si hay usuario, procedemos con la lógica normal
     if (isFavorite) {
       removeFavorite(character.id);
     } else {
@@ -85,7 +102,7 @@ export const Card = ({ character, rating = 0, onRate }: any) => {
 
       <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent z-10" />
 
-      {/* Botón Corazón - Siempre visible, pero condicionado por 'user' para el color */}
+      {/* Botón Corazón */}
       <button
         onClick={toggleFavorite}
         className="absolute top-5 right-5 z-50 p-2.5 rounded-full bg-black/40 backdrop-blur-md hover:bg-white/10 transition-all active:scale-75"
@@ -97,10 +114,10 @@ export const Card = ({ character, rating = 0, onRate }: any) => {
         />
       </button>
 
-      {/* --- ALERTA DE NEXO PROTEGIDO (Tu diseño original) --- */}
+      {/* ALERTA DE NEXO PROTEGIDO */}
       <div className={cn(
         "absolute inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-8 transition-all duration-500 ease-in-out",
-        showLoginAlert ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+        (showLoginAlert && !user) ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
       )}>
         <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-4 border border-blue-500/20">
           <LogIn className="text-blue-500" size={28} />
@@ -111,18 +128,18 @@ export const Card = ({ character, rating = 0, onRate }: any) => {
             onClick={(e) => { e.stopPropagation(); router.push('/login'); }} 
             className="py-3 bg-blue-600 text-[10px] font-black rounded-lg text-white uppercase italic hover:bg-blue-500 transition-colors"
           >
-            Entrar al Sistema
+            Iniciar Sesion
           </button>
           <button 
             onClick={(e) => { e.stopPropagation(); setShowLoginAlert(false); }} 
             className="py-3 bg-slate-800 text-[10px] font-black rounded-lg text-slate-400 uppercase italic hover:bg-slate-700 transition-colors"
           >
-            Abortar
+            Cancelar
           </button>
         </div>
       </div>
 
-      {/* --- INFORMACIÓN DEL PERSONAJE --- */}
+      {/* INFORMACIÓN DEL PERSONAJE */}
       <div className="absolute inset-x-0 bottom-0 p-8 z-20 transition-transform duration-500 ease-[cubic-bezier(0.17,0.67,0.3,1)] group-hover:-translate-y-24">
         <h3 className="text-white text-2xl font-black italic uppercase leading-[0.9] mb-3 tracking-tighter drop-shadow-2xl">
           {character.name}
@@ -133,7 +150,7 @@ export const Card = ({ character, rating = 0, onRate }: any) => {
         </div>
       </div>
 
-      {/* --- HOVER CONTROLS --- */}
+      {/* HOVER CONTROLS */}
       <div className="absolute inset-x-0 bottom-8 z-30 opacity-0 translate-y-8 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:translate-y-0 flex flex-col items-center gap-4">
         <button
           onClick={(e) => {
@@ -145,7 +162,6 @@ export const Card = ({ character, rating = 0, onRate }: any) => {
           Info <Plus size={14} strokeWidth={3} />
         </button>
 
-        {/* Sistema de Estrellas */}
         <div className="flex gap-2 justify-center pt-4 border-t border-white/5 w-full max-w-[80%]" onMouseLeave={() => setHoveredStar(0)}>
           {[1,2,3,4,5].map((n) => (
             <span
@@ -154,7 +170,7 @@ export const Card = ({ character, rating = 0, onRate }: any) => {
               onClick={(e) => handleRateClick(e, n)}
               className={cn(
                 "text-2xl cursor-pointer transition-all duration-300 hover:scale-150 active:scale-90",
-                (hoveredStar >= n || (!hoveredStar && rating >= n)) 
+                (hoveredStar >= n || (!hoveredStar && savedRating >= n)) 
                   ? "text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]" 
                   : "text-slate-700"
               )}

@@ -1,69 +1,44 @@
 import { NextResponse } from "next/server";
-import dbConnect from "@/lib/mongodb";
-import User, { IUser } from "@/db/models/users";
-import { Model } from "mongoose";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { registerUser } from "@/core/services/auth.service";
+import { cookies } from "next/headers";
 
-// app/api/auth/register/route.ts
-// ... (tus imports igual)
-
-export async function POST(request: Request) {
-  const UserModel = User as Model<IUser>;
-  
+export async function POST(req: Request) {
   try {
-    await dbConnect();
-    const { name, email, password } = await request.json();
+    const { name, email, password } = await req.json();
 
-    const userExists = await UserModel.findOne({ email });
-    if (userExists) {
-      return NextResponse.json({ error: "El email ya está registrado" }, { status: 400 });
-    }
+    const { user, token } = await registerUser(name, email, password);
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const cookieStore = await cookies();
 
-    const newUser = await UserModel.create({ 
-      name, 
-      email, 
-      password: hashedPassword,
-      role: "user" // Asegúrate de asignar un rol por defecto
-    });
-
-    const token = jwt.sign(
-      { userId: newUser._id, role: newUser.role }, 
-      process.env.JWT_SECRET as string, 
-      { expiresIn: "7d" }
-    );
-
-    // --- AQUÍ EL CAMBIO CRUCIAL ---
-    const response = NextResponse.json({
-      user: { id: newUser._id, name: newUser.name, email: newUser.email, role: newUser.role },
-      token
-    }, { status: 201 });
-
-    // Seteamos la cookie para que el Middleware la vea inmediatamente
-    response.cookies.set("session", token, {
+    cookieStore.set("session", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7,
+      sameSite: "strict",
       path: "/",
+      maxAge: 60 * 60 * 24 * 7,
     });
 
-    // También la del rol
-    response.cookies.set("user-role", "user", {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7,
+    cookieStore.set("user-role", user.role, {
       path: "/",
+      maxAge: 60 * 60 * 24 * 7,
     });
 
-    return response;
+    return NextResponse.json({
+      user,
+    });
 
-  } catch (error) {
-    console.error("Error en Registro:", error);
-    return NextResponse.json({ error: "Error al registrar usuario" }, { status: 500 });
+  } catch (error: any) {
+
+    if (error.message === "USER_EXISTS") {
+      return NextResponse.json(
+        { error: "El usuario ya existe" },
+        { status: 409 }
+      );
+    }
+
+    return NextResponse.json(
+      { error: "Error al registrar usuario" },
+      { status: 500 }
+    );
   }
 }

@@ -11,10 +11,10 @@ export const useCharactersData = () => {
 
   const charactersQuery = useInfiniteQuery({
     queryKey: ["characters", searchQuery],
-    queryFn: async ({ pageParam = 1 }) => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      
-      return fetcher(`https://rickandmortyapi.com/api/character?page=${pageParam}&name=${searchQuery}`);
+    queryFn: ({ pageParam = 1 }) => {
+      return fetcher(
+        `https://rickandmortyapi.com/api/character?page=${pageParam}&name=${searchQuery}`,
+      );
     },
     getNextPageParam: (lastPage: any) => {
       const nextUrl = lastPage.info?.next;
@@ -36,7 +36,8 @@ export const useCharactersData = () => {
     setSearchQuery(query);
   };
 
-  const allCharacters = charactersQuery.data?.pages.flatMap(page => page.results) || [];
+  const allCharacters =
+    charactersQuery.data?.pages.flatMap((page) => page.results) || [];
 
   return {
     searchQuery,

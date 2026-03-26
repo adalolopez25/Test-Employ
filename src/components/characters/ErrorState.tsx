@@ -7,7 +7,7 @@ export const ErrorState = () => {
     <div className="flex flex-col items-center justify-center py-40 text-blue-500 italic">
       <WifiOff size={48} className="mb-4 opacity-50 animate-pulse" />
       <p className="font-black uppercase tracking-widest text-center max-w-xs">
-        Fallo en la sincronización multiversal
+        Fallo en la sincronización 
       </p>
       <button 
         onClick={() => window.location.reload()}
