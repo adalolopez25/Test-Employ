@@ -16,6 +16,7 @@
         "src/*"
       ]
     },
+    "allowImportingTsExtensions": true,
     "allowJs": true,
     "skipLibCheck": true,
     "noEmit": true,

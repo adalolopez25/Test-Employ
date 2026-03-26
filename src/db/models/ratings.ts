@@ -1,6 +1,5 @@
 import mongoose, { Schema, model, models, Model } from "mongoose";
 
-// 1. Definimos la interfaz (agregamos Document para compatibilidad total con Mongoose)
 export interface IRating extends mongoose.Document {
   characterId: number;
   userId: string;
@@ -19,7 +18,7 @@ export interface IRating extends mongoose.Document {
 const RatingSchema = new Schema<IRating>({
   characterId: { type: Number, required: true },
   userId: { type: String, required: true, default: "user_2026" },
-  rating: { type: Number, default: 0, min: 0, max: 5 }, // Bajé el min a 0 por si quieres "desmarcar"
+  rating: { type: Number, default: 0, min: 0, max: 5 }, 
   isFavorite: { type: Boolean, default: false },
   name: { type: String, required: true },
   image: { type: String, required: true },
@@ -28,11 +27,10 @@ const RatingSchema = new Schema<IRating>({
   origin: { type: String, required: true },
   location: { type: String, required: true },
   status: { type: String, required: true },
-  type: { type: String, required: false, default: "" }, // 'type' a veces viene vacío en la API
+  type: { type: String, required: false, default: "" }, 
 }, { timestamps: true });
 
-// 2. Exportación única y consistente
-// Usamos el nombre "Rating" tanto en el modelo como en el export
+
 const Rating: Model<IRating> = models.Rating || model<IRating>("Rating", RatingSchema);
 
 export default Rating;

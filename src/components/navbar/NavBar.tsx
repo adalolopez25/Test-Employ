@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import UserMenu from "./UserMenu";
+import NavLinks from "./Navlinks";
 
 const AuthModal = dynamic(
   () => import("@/components/ui/AuthModal").then((mod) => mod.AuthModal),
@@ -37,11 +38,8 @@ export default function NavBar() {
           Rick <span className="text-blue-500">& Morty</span>
         </h1>
 
-        <div className="hidden md:flex gap-6 text-sm text-white/70">
-          <Link href="/">Home</Link>
-          <Link href="/characters">Characters</Link>
-          <Link href="/about">Conócenos</Link>
-          <Link href="/contact">Contacto</Link>
+        <div className="hidden md:flex">
+          <NavLinks role={user?.role} />
         </div>
 
         {user ? (

@@ -1,35 +1,39 @@
 "use client";
 
-import { useAuthStore } from "@/core/hooks/store/useAuthStore";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 
-type Props = {
-  children: React.ReactNode;
+interface Props {
+  children: ReactNode;
   allowedRoles?: string[];
-};
+}
 
 export default function ProtectedRoute({ children, allowedRoles }: Props) {
-  const { user } = useAuthStore();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
-      router.replace("/");
+    if (status === "loading") return;
+
+    if (!session) {
+      router.replace("/login");
       return;
     }
 
-    if (allowedRoles && !allowedRoles.includes(user.role)) {
+    if (allowedRoles && !allowedRoles.includes(session.user.role)) {
       router.replace("/dashboard");
     }
-  }, [user, router, allowedRoles]);
+  }, [session, status, router, allowedRoles]);
 
-  if (!user) {
-    return (
-      <div className="p-8 text-white">
-        Verificando sesión...
-      </div>
-    );
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
+  if (!session) return null;
+
+  if (allowedRoles && !allowedRoles.includes(session.user.role)) {
+    return null;
   }
 
   return <>{children}</>;

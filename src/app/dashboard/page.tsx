@@ -9,9 +9,14 @@ export default function DashboardRedirect() {
   const router = useRouter();
 
   useEffect(() => {
-    if (status !== "authenticated") return;
+    if (status === "loading") return;
 
-    if (session.user.role === "admin") {
+    if (!session) {
+      router.replace("/login");
+      return;
+    }
+
+    if (session.user?.role === "admin") {
       router.replace("/admin");
     } else {
       router.replace("/dashboard/user");

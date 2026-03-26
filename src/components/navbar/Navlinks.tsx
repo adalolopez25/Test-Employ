@@ -20,6 +20,10 @@ export default function NavLinks({ role }: Props) {
     links.push({ title: "Dashboard Admin", href: "/admin" });
   }
 
+  if (role === "user") {
+    links.push({ title: "Dashboard", href: "/dashboard/user" });
+  }
+
   return (
     <ul className="flex gap-8 font-black italic text-base tracking-tight">
       {links.map((link) => (

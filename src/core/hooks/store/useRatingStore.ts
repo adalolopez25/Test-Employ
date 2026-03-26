@@ -2,10 +2,11 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface Rating {
-  characterId: number;
+  characterId: number | string;
   characterName: string;
   image: string;
   value: number;
+  userId: string;
 }
 
 interface RatingStore {

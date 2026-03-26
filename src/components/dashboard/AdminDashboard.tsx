@@ -26,7 +26,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="p-8 bg-[#0a0a0a] min-h-screen text-white">
+    <div className="p-8 bg-transparent min-h-screen text-white">
 
       <h1 className="text-4xl font-black italic uppercase mb-8 border-l-4 border-blue-600 pl-4">
         Panel de Administrador

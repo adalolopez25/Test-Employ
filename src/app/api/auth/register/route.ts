@@ -1,35 +1,51 @@
 import { NextResponse } from "next/server";
 import { registerUser } from "@/core/services/auth.service";
-import { cookies } from "next/headers";
+import dbConnect from "@/lib/mongodb";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password } = await req.json();
+    console.log("📩 Petición de registro recibida");
 
-    const { user, token } = await registerUser(name, email, password);
+    await dbConnect();
+    console.log("✅ Conectado a MongoDB");
 
-    const cookieStore = await cookies();
+    const body = await req.json();
+    console.log("📦 Body recibido:", body);
 
-    cookieStore.set("session", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7,
-    });
+    const { name, email, password } = body;
 
-    cookieStore.set("user-role", user.role, {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7,
-    });
+    console.log("🧾 Datos extraídos:");
+    console.log("name:", name);
+    console.log("email:", email);
+    console.log("password length:", password?.length);
 
-    return NextResponse.json({
-      user,
-    });
+    const result = await registerUser(name, email, password);
+
+    console.log("📤 Resultado de registerUser:", result);
+
+    return NextResponse.json(
+      {
+        success: true,
+        user: {
+          id: result.user.id,
+          name: result.user.name,
+          email: result.user.email,
+          role: result.user.role
+        }
+      },
+      { status: 201 }
+    );
 
   } catch (error: any) {
 
+    console.error("❌ ERROR EN REGISTRO:");
+    console.error(error);
+    console.error("Mensaje:", error?.message);
+    console.error("Stack:", error?.stack);
+
     if (error.message === "USER_EXISTS") {
+      console.log("⚠️ El usuario ya existe");
+
       return NextResponse.json(
         { error: "El usuario ya existe" },
         { status: 409 }
@@ -37,7 +53,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      { error: "Error al registrar usuario" },
+      { error: "Fallo en la creación del usuario" },
       { status: 500 }
     );
   }

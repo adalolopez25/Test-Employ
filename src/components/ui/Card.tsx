@@ -66,7 +66,8 @@ export const Card = ({ character, rating = 0, onRate }: any) => {
       characterId: character.id,
       characterName: character.name,
       image: character.image,
-      value: value
+      value: value,
+      userId : user.email
     });
 
     onRate?.(character.id, value);
@@ -82,7 +83,7 @@ export const Card = ({ character, rating = 0, onRate }: any) => {
     if (isFavorite) {
       removeFavorite(character.id);
     } else {
-      addFavorite(character);
+      addFavorite({...character, userId : user.email});
     }
   };
 
