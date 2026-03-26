@@ -23,7 +23,7 @@ export const useCharactersData = () => {
       const url = new URL(nextUrl);
       return url.searchParams.get("page");
     },
-    initialPageParam: 1,
+    initialPageParam: "1",
   });
 
   const ratingsQuery = useQuery({

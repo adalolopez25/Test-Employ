@@ -154,3 +154,24 @@ Piensa siempre:
 > *“¿Cómo dejaría este proyecto para que otro desarrollador pueda continuarlo sin problemas?”*
 
 Éxitos 🚀
+
+-----------------------------------------------------------------------------------------------------------
+
+# 🧪 Resolución de Prueba Técnica - Rick and Morty
+
+## 📌 Principales problemas encontrados
+- **Tipado inexistente:** Uso excesivo de `any`, lo que generaba riesgos de errores en tiempo de ejecución.
+- **Lógica dispersa:** Las peticiones a la API se realizaban directamente en los componentes, rompiendo el principio de responsabilidad única.
+- **Configuración de Next.js:** Errores en la autorización de dominios externos para imágenes (Google y Rick and Morty API).
+- **Desincronización de Estado:** El estado de autenticación de NextAuth no se comunicaba correctamente con el store de Zustand.
+
+## 🛠️ Decisiones técnicas tomadas
+- **Arquitectura de Servicios:** Se centralizaron las peticiones en `core/services` para desacoplar la lógica de la UI.
+- **Tipado Estricto:** Se definieron interfaces para los personajes y las respuestas de la API, asegurando que el proyecto compile sin errores.
+- **Sincronización de Sesión:** Se implementó un flujo de sincronización automática entre NextAuth y Zustand para mantener la persistencia del usuario.
+- **Optimización de Imágenes:** Se configuró correctamente `next.config.ts` para permitir el renderizado seguro de avatares desde dominios externos.
+
+## 🚀 Qué mejoraría con más tiempo
+- Implementación de **Unit Testing** para los servicios y hooks.
+- Creación de **Skeletons** de carga más detallados para una mejor UX.
+- Implementación de filtros avanzados (género, origen) aprovechando los endpoints de la API.
