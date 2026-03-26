@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react"; // 1. Importar hooks
-import { useFavoriteStore } from "@/hooks/store/useFavoriteStore";
+import { useState, useEffect } from "react"; 
+import { useFavoriteStore } from "@/core/hooks/store/useFavoriteStore";
 import Link from "next/link";
-import Image from "next/image"; // 2. Usar Image de Next
-import { CardSkeleton } from "../components/skeletons/CardSkeleton";
+import Image from "next/image"; 
+import { CardSkeleton } from "@/components/shared/CardSkeleton";
 
 const FavoritesPage = () => {
   const { favorites, removeFavorite } = useFavoriteStore();

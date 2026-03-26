@@ -73,7 +73,7 @@ export default function About() {
 
   return (
     <section className="w-full px-4 md:px-8 py-12 bg-transparent">
-      <div className="max-w-[1200px] mx-auto flex flex-col gap-8">
+      <div className="max-w-300 mx-auto flex flex-col gap-8">
         {/* Botones de secciones */}
         <div className="flex gap-4 justify-center flex-wrap">
           <button
@@ -109,7 +109,7 @@ export default function About() {
         </div>
 
         {/* Contenedor de contenido */}
-        <div className="relative overflow-hidden transition-all duration-500 h-[600px]">
+        <div className="relative overflow-hidden transition-all duration-500 h-150">
           {/* Información del proyecto */}
           {/* Información del proyecto */}
           <div

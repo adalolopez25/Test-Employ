@@ -1,5 +1,5 @@
 // src/lib/api-client.ts
-import { useAuthStore } from "@/hooks/store/useAuthStore";
+import { useAuthStore } from "@/core/hooks/store/useAuthStore";
 
 export const fetcher = async <T>(endpoint: string, options?: RequestInit): Promise<T> => {
   const isExternal = endpoint.startsWith("http");

@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Zap, Target, Globe, Fingerprint } from "lucide-react";
 import Image from "next/image";
 import { fetcher } from "@/lib/api-client";
-import  {InfoSkeleton}  from "@/app/components/skeletons/InfoSkeleton";
+import  {InfoSkeleton}  from "@/components/shared/InfoSkeleton";
 import { cn } from "@/lib/utils";
 
 export default function CharacterInfoPage() {

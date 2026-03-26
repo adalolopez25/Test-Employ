@@ -3,8 +3,8 @@
 import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Heart as HeartIcon, ShieldAlert, LogIn, Plus } from "lucide-react";
-import { useAuthStore } from "@/hooks/store/useAuthStore";
-import { useFavoriteStore } from "@/hooks/store/useFavoriteStore"; 
+import { useAuthStore } from "@/core/hooks/store/useAuthStore";
+import { useFavoriteStore } from "@/core/hooks/store/useFavoriteStore"; 
 import Image from "next/image";
 import { fetcher } from "@/lib/api-client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -83,7 +83,7 @@ export const Card = ({ character, rating = 0, onRate }: any) => {
         className="object-cover transition-transform duration-1000 group-hover:scale-110 opacity-70"
       />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
+      <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent z-10" />
 
       {/* Botón Corazón - Siempre visible, pero condicionado por 'user' para el color */}
       <button

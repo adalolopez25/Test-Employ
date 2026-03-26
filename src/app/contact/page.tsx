@@ -19,7 +19,7 @@ const ContactPage = () => {
 
   return (
     <section className="w-full px-4 md:px-8 py-24 bg-transparent">
-      <div className="max-w-[1400px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div className="max-w-350 mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         
         {/* Información de contacto */}
         <div className="space-y-10" data-aos="fade-right">

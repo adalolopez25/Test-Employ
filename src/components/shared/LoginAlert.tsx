@@ -15,7 +15,7 @@ export const LoginAlert = ({ isOpen, onClose, message }: LoginAlertProps) => {
       onClick={onClose}
     >
       <div 
-        className="bg-slate-900 border border-white/10 p-8 rounded-[2rem] max-w-[280px] w-full text-center shadow-2xl shadow-blue-500/20 animate-in zoom-in-95 duration-300"
+        className="bg-slate-900 border border-white/10 p-8 rounded-[2rem] max-w-70 w-full text-center shadow-2xl shadow-blue-500/20 animate-in zoom-in-95 duration-300"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="bg-blue-500/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/20">

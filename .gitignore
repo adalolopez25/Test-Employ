@@ -39,3 +39,5 @@ next-env.d.ts
 /public/assets/
 *.mp4
 *.webm
+/public/assets/
+*.mp4

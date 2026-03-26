@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import type { MediaItem } from "@/types/MEDIA_ITEMS";
-import type { VideoProps } from "@/types/Video";
+import type { MediaItem } from "@/core/types/MEDIA_ITEMS";
+import type { VideoProps } from "@/core/types/Video";
 
-import { MEDIA_ITEMS as Trailers } from "@/data/trailers";
+import { MEDIA_ITEMS as Trailers } from "@/core/constants/trailers";
 import {
   Play,
   Pause,
@@ -30,7 +30,7 @@ export function RickAndMortyMedia() {
 
   return (
     <section className="w-full px-4 md:px-8 py-24 mb-20 bg-transparent">
-      <div className="max-w-[1400px] mx-auto w-full">
+      <div className="max-w-350 mx-auto w-full">
         {/* Header */}
         <div className="mb-14 pl-6 border-l-4 border-blue-600">
           <span className="text-blue-500 font-bold uppercase tracking-[0.4em] text-[10px] block mb-2">
@@ -98,10 +98,10 @@ function VideoCard({ src, title, tag, poster, onOpen }: VideoProps) {
 
   return (
     <div
-      className="group flex flex-col gap-4 cursor-pointer w-[280px] flex-shrink-0"
+      className="group flex flex-col gap-4 cursor-pointer w-70 shrink-0"
       onClick={onOpen}
     >
-      <div className="relative aspect-video w-full rounded-[2rem] overflow-hidden border border-white/10 bg-white/[0.03] transition-all duration-500 group-hover:border-blue-500/50 shadow-2xl">
+      <div className="relative aspect-video w-full rounded-[2rem] overflow-hidden border border-white/10 bg-white/3 transition-all duration-500 group-hover:border-blue-500/50 shadow-2xl">
         <video
           ref={videoRef}
           src={src}
@@ -232,7 +232,7 @@ function VideoModal({ video, onClose }: { video: any; onClose: () => void }) {
         </div>
 
         {/* Barra de Controles */}
-        <div className={`absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black via-black/80 to-transparent transition-transform duration-500 ${showControls ? 'translate-y-0' : 'translate-y-full'} pointer-events-auto`}>
+        <div className={`absolute bottom-0 left-0 w-full p-8 bg-linear-to-t from-black via-black/80 to-transparent transition-transform duration-500 ${showControls ? 'translate-y-0' : 'translate-y-full'} pointer-events-auto`}>
           <div className="w-full h-1.5 bg-white/10 rounded-full mb-6 overflow-hidden">
             <div className="h-full bg-blue-600" style={{ width: `${progress}%` }} />
           </div>

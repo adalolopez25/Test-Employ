@@ -1,10 +1,10 @@
 "use client"
-import { BannerCarousel } from "@/app/components/HomeBanner";
-import { AboutSeries } from "@/app/components/AboutSeries";
-import { RickAndMortyMedia } from "@/app/components/RickAndMortyMedia";
-import { CharacterRow } from "./components/CharacterRows";
+import { BannerCarousel } from "@/components/home/HomeBanner";
+import { AboutSeries } from "@/components/home/AboutSeries";
+import { RickAndMortyMedia } from "@/components/home/RickAndMortyMedia";
+import { CharacterRow } from "@/components/shared/CharacterRows";
 import { useEffect, useState } from "react";
-import { CardSkeleton } from "./components/skeletons/CardSkeleton";
+import { CardSkeleton } from "@/components/shared/CardSkeleton";
 
 export default function HomePage() {
   const [isReady,setIsReady] = useState(false);

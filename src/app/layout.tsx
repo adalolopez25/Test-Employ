@@ -4,7 +4,7 @@ import Header from "@/components/layout/header/Header";
 import { Geist } from "next/font/google";
 import { Toaster } from "sonner";
 import { Providers } from "@/app/Provider";
-import { ScrollToTop } from "./characters/components/ScrollToTop";
+import { ScrollToTop } from "@/components/characters/ScrollToTop";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 

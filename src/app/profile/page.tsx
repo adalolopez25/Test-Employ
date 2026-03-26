@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuthStore } from "@/hooks/store/useAuthStore";
+import { useAuthStore } from "@/core/hooks/store/useAuthStore";
 
 const ProfilePage = () => {
   const { user } = useAuthStore();
@@ -33,7 +33,7 @@ const ProfilePage = () => {
 
           {/* Header */}
           <div className="flex items-center gap-6 mb-8">
-            <div className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold bg-gradient-to-br from-blue-500 to-blue-700">
+            <div className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold bg-linear-to-br from-blue-500 to-blue-700">
               {getInitials(user.name)}
             </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { RegisterForm } from "@/components/forms/auth/RegisterForm";
+import { RegisterForm } from "@/components/auth/RegisterForm";
 import { motion } from "framer-motion";
 
 export default function RegisterPage() {
@@ -18,7 +18,7 @@ export default function RegisterPage() {
         className="w-full max-w-md relative group"
       >
         {/* Glow Efecto al pasar el mouse */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-[3rem] opacity-10 group-hover:opacity-20 transition duration-1000 blur-2xl" />
+        <div className="absolute -inset-1 bg-linear-to-r from-blue-600 to-cyan-500 rounded-[3rem] opacity-10 group-hover:opacity-20 transition duration-1000 blur-2xl" />
         
         <div className="relative bg-[#0a0a0a]/80 border border-white/10 p-10 rounded-[2.5rem] backdrop-blur-3xl shadow-2xl">
           
@@ -30,17 +30,15 @@ export default function RegisterPage() {
               transition={{ delay: 0.2 }}
               className="text-4xl font-black italic text-white tracking-tighter uppercase leading-none"
             >
-              NUEVO <span className="text-blue-500">VIAJERO</span>
+              NUEVO <span className="text-blue-500">Usuario</span>
             </motion.h2>
             <p className="text-slate-500 text-[10px] tracking-[0.4em] mt-4 font-black uppercase italic">
-              Crea tu registro interdimensional
+              Crea tu cuenta
             </p>
           </div>
 
-          {/* Formulario Atómico (Lógica Centralizada) */}
           <RegisterForm />
 
-          {/* Footer de la Vista */}
           <div className="mt-10 pt-6 border-t border-white/5 text-center">
             <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
               ¿Ya tienes una cuenta?{" "}
@@ -56,7 +54,7 @@ export default function RegisterPage() {
 
         {/* Badge de Seguridad Opcional */}
         <p className="text-center mt-6 text-[8px] text-slate-700 font-black uppercase tracking-[0.5em]">
-          AnimeHero Security Protocol v2.0
+          by Andres Armenta
         </p>
       </motion.div>
     </div>

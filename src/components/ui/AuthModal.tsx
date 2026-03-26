@@ -4,8 +4,8 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { LoginForm } from "@/components/forms/auth/LoginForm";
-import { RegisterForm } from "@/components/forms/auth/RegisterForm";
+import { LoginForm } from "@/components/auth/LoginForm";
+import { RegisterForm } from "@/components/auth/RegisterForm";
 
 export const AuthModal = ({
   isOpen,
@@ -15,7 +15,7 @@ export const AuthModal = ({
   onClose: () => void;
 }) => {
   const [isLogin, setIsLogin] = useState(true);
-  const imageMongo = "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/webp/rick.webp";
+  const imageForm = "https://rick-morty.s3.us-east-2.amazonaws.com/Rick-and-Morty/Imagenes/webp/rick.webp";
 
   if (!isOpen) return null;
 
@@ -34,24 +34,24 @@ export const AuthModal = ({
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-5xl bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] flex shadow-[0_0_50px_rgba(0,0,0,0.5)] min-h-[600px] overflow-hidden"
+            className="relative w-full max-w-5xl bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] flex shadow-[0_0_50px_rgba(0,0,0,0.5)] min-h-150 overflow-hidden"
           >
             <button
               onClick={onClose}
               className="cursor-pointer absolute top-6 right-6 text-slate-500 hover:text-white z- transition-colors p-2 hover:bg-white/5 rounded-full"
             >
-              <X size={26} />
+              <X size={30} color="white"/>
             </button>
 
             {/* Lado Izquierdo: Imagen */}
             <div className="hidden md:block w-1/2 relative">
               <Image
-                src={imageMongo}
+                src={imageForm}
                 fill
                 alt="Rick and Morty"
                 className="object-cover opacity-50 grayscale"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0a0a0a]" />
+              <div className="absolute inset-0 bg-linear-to-r from-transparent to-[#0a0a0a]" />
               <div className="absolute bottom-12 left-12 z-10">
                 <h3 className="text-4xl font-black italic text-white uppercase tracking-tighter">
                   RICK <span className="text-blue-500">& MORTY</span>
@@ -80,7 +80,7 @@ export const AuthModal = ({
                       Register
                     </button>
                     <motion.div
-                      className="absolute bottom-[-1px] h-0.5 bg-blue-500 shadow-[0_0_15px_#3b82f6]"
+                      className="absolute -bottom-px h-0.5 bg-blue-500 shadow-[0_0_15px_#3b82f6]"
                       animate={{ width: "50%", left: isLogin ? "0%" : "50%" }}
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     />

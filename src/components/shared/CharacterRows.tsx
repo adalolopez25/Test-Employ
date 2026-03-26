@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import  { useRef } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
@@ -36,7 +36,7 @@ export function CharacterRow() {
           href="/characters" 
           className="hidden md:flex items-center gap-2 text-blue-500 font-black uppercase italic tracking-widest text-[10px] hover:text-white transition-colors group/link"
         >
-           Ver Mas + 
+           Ver Mas 
           <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
         </Link>
       </div>

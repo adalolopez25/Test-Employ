@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card } from "@/app/components/Card";
-import Loading from "../loading"; // O tu componente de carga
+import { Card } from "@/components/ui/Card";
+import Loading from "../loading";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
@@ -68,7 +68,6 @@ export default function RatedPage() {
                 
               }}
               rating={char.rating}
-              // Re-usamos la lógica de calificar por si quieres cambiarla desde aquí
               onRate={async (id, val) => {
                 // Aquí podrías copiar la lógica de handleUpdateInteraction si quieres permitir editar
               }}

@@ -2,19 +2,20 @@
 
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
-import { Card } from "@/app/components/Card";
-import { SearchInput } from "./components/SearchInput";
-import { CharacterHeader } from "./components/CharacterHeader";
-import { CardSkeleton } from "../components/skeletons/CardSkeleton"; // El que creamos antes
+import { Card } from "@/components/ui/Card";
+import { SearchInput } from "@/components/characters/SearchInput";
+import { CharacterHeader } from "@/components/characters/CharacterHeader";
+import { CardSkeleton } from "@/components/shared/CardSkeleton"; // El que creamos antes
 import { fetcher } from "@/lib/api-client";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { GlobalStats } from "@/components/home/GlobalStats";
+
+
 
 export default function CharactersPage() {
   const { ref, inView } = useInView();
   const [searchTerm, setSearchTerm] = useState("");
-
   const {
     data,
     fetchNextPage,
@@ -34,25 +35,23 @@ export default function CharactersPage() {
     },
     initialPageParam: 1,
   });
-
   useEffect(() => {
     if (inView && hasNextPage) {
       fetchNextPage();
     }
   }, [inView, hasNextPage, fetchNextPage]);
-
-  if (isError)
+ 
+  if (isError)  
     return (
       <div className="flex  flex-col  items-center justify-center min-h-screen">
         <h2>Error al cargar los datos</h2>
-        <Link href={"/characters"} className=" text-red-500 animate-pulse text-6xl">Recargar
-        </Link>
       </div>
     );
 
   return (
     <div className="text-white py-10 min-h-screen">
       <SearchInput onSearch={(val) => setSearchTerm(val)} />
+        <GlobalStats />
       <CharacterHeader />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
