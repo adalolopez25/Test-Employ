@@ -66,12 +66,12 @@ export const RegisterForm = ({
   return (
     <div className="w-full">
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-2xl text-[10px] font-black uppercase tracking-widest mb-6 text-center italic">
+        <div className="bg-transparent border border-red-500/20 text-red-400 p-4 rounded-2xl text-[10px] font-black uppercase tracking-widest mb-6 text-center italic">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 bg-transparent">
         <div className="relative group/input">
           <UserIcon
             className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within/input:text-blue-500 transition-colors"

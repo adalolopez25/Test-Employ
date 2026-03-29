@@ -20,7 +20,7 @@ export default function RegisterPage() {
         {/* Glow Efecto al pasar el mouse */}
         <div className="absolute -inset-1 bg-linear-to-r from-blue-600 to-cyan-500 rounded-[3rem] opacity-10 group-hover:opacity-20 transition duration-1000 blur-2xl" />
         
-        <div className="relative bg-[#0a0a0a]/80 border border-white/10 p-10 rounded-[2.5rem] backdrop-blur-3xl shadow-2xl">
+        <div className="relative bg-transparent border border-white/10 p-10 rounded-[2.5rem] backdrop-blur-3xl shadow-2xl">
           
           {/* Header de la Vista */}
           <div className="text-center mb-10">

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
 import { useFavoriteStore } from "@/core/hooks/store/useFavoriteStore";
 import Link from "next/link";
-import Image from "next/image"; 
+import Image from "next/image";
 import { CardSkeleton } from "@/components/shared/CardSkeleton";
 import { useSession } from "next-auth/react";
 
@@ -11,16 +11,19 @@ const FavoritesPage = () => {
   const { data: session } = useSession();
   const user = session?.user;
 
-  const favorites = useFavoriteStore((state) =>
-    user ? state.favorites.filter((fav) => fav.id === user.email) : []
-  );
-
+  // Obtener estado SIN transformar (evita loop)
+  const favoritesStore = useFavoriteStore((state) => state.favorites);
   const removeFavorite = useFavoriteStore((state) => state.removeFavorite);
+
+  // Filtrar favoritos del usuario
+  const favorites = user
+    ? favoritesStore.filter((fav: any) => fav.userId === user.email)
+    : [];
 
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    setIsReady(true); 
+    setIsReady(true);
   }, []);
 
   if (!isReady) {
@@ -29,7 +32,9 @@ const FavoritesPage = () => {
         <div className="max-w-5xl mx-auto">
           <div className="h-10 w-48 bg-slate-900 animate-pulse rounded-lg mb-8" />
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => <CardSkeleton key={i} />)}
+            {[...Array(6)].map((_, i) => (
+              <CardSkeleton key={i} />
+            ))}
           </div>
         </div>
       </div>

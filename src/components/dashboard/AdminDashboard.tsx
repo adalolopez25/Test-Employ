@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/api-client";
 
 export default function AdminDashboard() {
+
   const { data: users, isLoading, error } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => fetcher<any[]>("/api/admin/users"),
@@ -11,7 +12,7 @@ export default function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <p className="p-8 text-slate-400">
+      <p className="p-10 text-slate-400">
         Cargando registros del multiverso...
       </p>
     );
@@ -19,16 +20,16 @@ export default function AdminDashboard() {
 
   if (error instanceof Error) {
     return (
-      <p className="p-8 text-red-500">
+      <p className="p-10 text-red-500">
         {error.message}
       </p>
     );
   }
 
   return (
-    <div className="p-8 bg-transparent min-h-screen text-white">
+    <div className="p-10 bg-transparent min-h-screen text-white">
 
-      <h1 className="text-4xl font-black italic uppercase mb-8 border-l-4 border-blue-600 pl-4">
+      <h1 className="text-4xl font-black italic uppercase mb-10 border-l-4 border-blue-600 pl-4">
         Panel de Administrador
       </h1>
 
@@ -48,6 +49,7 @@ export default function AdminDashboard() {
           <tbody className="divide-y divide-white/5">
 
             {users?.map((u) => (
+
               <tr key={u._id} className="hover:bg-white/5">
 
                 <td className="p-6 font-bold">
@@ -59,6 +61,7 @@ export default function AdminDashboard() {
                 </td>
 
                 <td className="p-6">
+
                   <span
                     className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${
                       u.role === "admin"
@@ -68,21 +71,27 @@ export default function AdminDashboard() {
                   >
                     {u.role}
                   </span>
+
                 </td>
 
                 <td className="p-6">
+
                   <button className="text-[10px] font-black uppercase text-slate-500 hover:text-white">
                     Editar permisos
                   </button>
+
                 </td>
 
               </tr>
+
             ))}
 
           </tbody>
+
         </table>
 
       </div>
+
     </div>
   );
 }

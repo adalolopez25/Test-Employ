@@ -14,6 +14,7 @@ export default function NavLinks({ role }: Props) {
     { title: "Inicio", href: "/" },
     { title: "Conocenos", href: "/about" },
     { title: "Contacto", href: "/contact" },
+    {title : "Characters", href : "/characters"}
   ];
 
   if (role === "admin") {

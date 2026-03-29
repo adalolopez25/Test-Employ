@@ -48,15 +48,9 @@ export default function NavBar() {
           <div className="flex gap-4">
             <button
               onClick={openLogin}
-              className="text-white text-sm hover:text-blue-400 transition"
-            >
-              Login
-            </button>
-            <button
-              onClick={openRegister}
               className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition"
             >
-              Register
+              Login
             </button>
           </div>
         )}

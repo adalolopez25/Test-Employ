@@ -14,27 +14,31 @@ export async function middleware(req: NextRequest) {
   const isAuthenticated = !!token;
 
   const authRoutes = ["/login", "/register"];
-
   const isAuthRoute = authRoutes.includes(pathname);
+
   const isAdminRoute = pathname.startsWith("/admin");
+
   const isPrivateRoute =
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/profile") ||
     pathname.startsWith("/favorites");
 
+  // Usuario logueado no puede ir a login/register
   if (isAuthenticated && isAuthRoute) {
     return NextResponse.redirect(new URL("/characters", req.url));
   }
 
+  // Usuario no logueado intenta ruta privada
   if (!isAuthenticated && (isPrivateRoute || isAdminRoute)) {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isAdminRoute) {
+  // Solo admin puede entrar a /admin
+  if (isAuthenticated && isAdminRoute) {
     if (token?.role !== "admin") {
-      return NextResponse.redirect(new URL("/characters", req.url));
+      return NextResponse.redirect(new URL("/dashboard", req.url));
     }
   }
 

@@ -14,6 +14,7 @@ export const authConfig = {
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
       clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+      allowDangerousEmailAccountLinking: true,
       profile(profile) {
         return {
           id: profile.sub,
@@ -40,7 +41,7 @@ export const authConfig = {
 
           const response = await loginUser(
             credentials.email as string,
-            credentials.password as string
+            credentials.password as string,
           );
 
           if (response && response.user) {
@@ -70,27 +71,32 @@ export const authConfig = {
   },
 
   callbacks: {
-
     async signIn({ user, account }) {
-
       if (account?.provider === "google") {
-
         await dbConnect();
 
         const existingUser = await User.findOne({ email: user.email });
 
         if (!existingUser) {
-
           await User.create({
             name: user.name,
             email: user.email,
             image: user.image,
             role: "user",
-            provider: "google"
+            provider: "google",
           });
-
+        } else {
+          await User.updateOne(
+            {
+              email: user.email,
+            },
+            {
+              name: user.name,
+              email: user.email,
+              provider: "google",
+            },
+          );
         }
-
       }
 
       return true;
@@ -98,9 +104,15 @@ export const authConfig = {
 
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.role = (user as any).role ?? "user";
+        await dbConnect();
+        const dbUser = await User.findOne({ email: user.email });
+        if (dbUser) {
+          token.id = dbUser._id.toString();
+          token.role = dbUser.role;
+          token.picture = dbUser.image;
+        }
       }
+
       return token;
     },
 
@@ -108,10 +120,10 @@ export const authConfig = {
       if (session.user) {
         (session.user as any).id = token.id;
         (session.user as any).role = token.role;
+        session.user.image = token.picture;
       }
       return session;
     },
-
   },
 
   secret: process.env.NEXTAUTH_SECRET,

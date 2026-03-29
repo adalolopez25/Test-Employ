@@ -3,7 +3,7 @@ import mongoose, { Schema, model, models,Model } from "mongoose";
 export interface IUser extends mongoose.Document {
   name: string;
   email: string;
-  password: string;
+  password?: string;
   image?: string;
   role : "admin" | "user",
   provider : "credentials" | "google"

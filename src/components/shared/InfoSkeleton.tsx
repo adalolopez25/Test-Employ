@@ -1,7 +1,7 @@
 // components/skeletons/InfoSkeleton.tsx
 export const InfoSkeleton = () => {
   return (
-    <div className="min-h-screen bg-[#050505] p-12 animate-pulse">
+    <div className="min-h-screen bg-transparent p-12 animate-pulse">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-12">
         {/* Espacio para la imagen grande */}
         <div className="w-full md:w-1/2 h-125 bg-slate-900/50 rounded-[3rem] border border-white/5" />

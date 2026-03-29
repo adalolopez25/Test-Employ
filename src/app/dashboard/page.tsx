@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function DashboardRedirect() {
+
   const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
+
     if (status === "loading") return;
 
     if (!session) {
@@ -17,16 +19,17 @@ export default function DashboardRedirect() {
     }
 
     if (session.user?.role === "admin") {
-      router.replace("/admin");
+      router.replace("/dashboard/admin");
     } else {
       router.replace("/dashboard/user");
     }
+
   }, [session, status, router]);
 
   if (status === "loading") {
     return (
-      <div className="p-8 text-white">
-        Cargando sesión...
+      <div className="p-10 text-white">
+        Cargando sesión del portal interdimensional...
       </div>
     );
   }
